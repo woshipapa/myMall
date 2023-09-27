@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.UmsRoleDAO">
+    <select id="getMenus" parameterType="java.lang.Long" resultType="com.papa.mbg.model.UmsMenu">
+        select m.*
+        from `ums_role_menu_relation` rm
+        left join `ums_menu` m on rm.menu_id = m.id
+        where rm.role_id = #{roleId}
+    </select>
+
+    <select id="getResources" parameterType="java.lang.Long" resultType="com.papa.mbg.model.UmsResource">
+        select r.*
+        from `ums_role_resource_relation` rr
+        left join `ums_resource` r on rr.resource_id = r.id
+        where rr.role_id = #{roleId}
+    </select>
+</mapper>

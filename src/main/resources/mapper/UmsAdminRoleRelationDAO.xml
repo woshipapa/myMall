@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.UmsAdminRoleRelationDAO">
+    <insert id="insertRoles">
+        insert into `ums_admin_role_relation`(admin_id,role_id) values
+           <foreach collection="relation"   separator="," index="index" item="it">
+               (
+                #{it.adminId,},
+                #{it.roleId}
+               )
+           </foreach>
+
+    </insert>
+
+    <update id="updateAdminCountInRole">
+        update `ums_role` set
+                              <if test="type == 'add'"> admin_count = admin_count+1</if>
+                              <if test="type == 'sub'">admin_count = admin_count-1</if>
+        where id IN
+         <foreach collection="roleIds" item="it" open="(" close=")" separator=",">
+             #{it}
+         </foreach>
+    </update>
+
+    <select id="getRoles" parameterType="java.lang.Long" resultType="com.papa.mbg.model.UmsRole">
+        select r.*
+        from `ums_admin_role_relation` ar
+        left join `ums_role` r on ar.role_id = r.id
+        where ar.admin_id = #{adminId}
+    </select>
+
+    <select id="getMenusByAdmin" parameterType="java.lang.Long" resultType="com.papa.mbg.model.UmsMenu">
+        select m.*
+          from `ums_admin_role_relation` ar
+            left join `ums_role_menu_relation` mr on ar.role_id = mr.role_id
+            left join `ums_menu` m on mr.menu_id = m.id
+            where ar.admin_id = #{adminId}
+    </select>
+
+    <select id="getResourcesByAdmin" parameterType="java.lang.Long" resultType="com.papa.mbg.model.UmsResource">
+        select r.*
+           from `ums_admin_role_relation` ar
+            left join `ums_role_resource_relation` rr on ar.role_id = rr.role_id
+            left join `ums_resource` r on r.id = rr.resource_id
+        where ar.admin_id = #{adminId}
+    </select>
+</mapper>

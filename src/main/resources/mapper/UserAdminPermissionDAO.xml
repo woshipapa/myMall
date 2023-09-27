@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.UserAdminPermissionDAO">
+    <select id="getPermissionList" parameterType="java.lang.Long" resultType="com.papa.mbg.model.UmsPermission">
+        select p.* from
+                (select role_id from ums_admin_role_relation  where admin_id = #{id} ) as ar
+                    left join ums_role_permission_relation pr on ar.role_id = pr.role_id
+                    left join ums_permission p on pr.permission_id = p.id
+        where p.id is not null and
+                p.id  not in
+                (
+                    select up.id
+                    from ums_admin_permission_relation uapr
+                             left join ums_permission up on uapr.permission_id=up.id
+                    where uapr.admin_id=#{id} and up.status=-1
+                )
+        union
+        select up.*
+        from ums_admin_permission_relation uapr
+                 left join ums_permission up on uapr.permission_id = up.id
+        where uapr.admin_id = #{id} and up.status = 1
+
+
+    </select>
+
+
+
+</mapper>
+
+
