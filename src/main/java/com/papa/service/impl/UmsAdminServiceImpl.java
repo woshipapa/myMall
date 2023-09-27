@@ -2,10 +2,12 @@ package com.papa.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.papa.common.utils.JwtTokenUtil;
+import com.papa.common.utils.RequestUtil;
 import com.papa.dao.UmsAdminRoleRelationDAO;
 import com.papa.dao.UserAdminPermissionDAO;
 import com.papa.dto.AdminParam;
 import com.papa.dto.UmsAdminPasswordParam;
+import com.papa.mbg.mapper.UmsAdminLoginLogMapper;
 import com.papa.mbg.mapper.UmsAdminMapper;
 import com.papa.mbg.mapper.UmsAdminRoleRelationMapper;
 import com.papa.mbg.mapper.UmsRoleMapper;
@@ -21,8 +23,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -105,10 +110,32 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             }
             UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            return jwtTokenUtil.generateToken(userDetails);
+            String token = jwtTokenUtil.generateToken(userDetails);
+
+            insertLoginLog(userName);
+            return token;
         }
         return null;
     }
+
+    /**
+     * 登陆时调用，插入用户的登陆记录
+     */
+    @Resource
+    private UmsAdminLoginLogMapper mapper;
+
+    private void insertLoginLog(String userName){
+        UmsAdmin admin=getAdminByName(userName);
+        UmsAdminLoginLog log=new UmsAdminLoginLog();
+        log.setAdminId(admin.getId());
+        log.setCreateTime(new Date());
+        ServletRequestAttributes servletRequestAttributes =(ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request=servletRequestAttributes.getRequest();
+        log.setIp(RequestUtil.getRequestIp(request));
+        log.setUserAgent(RequestUtil.getBrowser(request));
+        mapper.insertSelective(log);
+    }
+
 
     @Override
     public List<UmsPermission> getPermissonsByAdminId(Long id) {
