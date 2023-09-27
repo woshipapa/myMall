@@ -3,9 +3,11 @@ package com.papa.config;
 import com.papa.component.RestAuthenticationEntryPoint;
 import com.papa.component.RestfulAccessDeniedHandler;
 import com.papa.component.jwtAuthenticationTokenFilter;
+import com.papa.dao.UmsAdminRoleRelationDAO;
 import com.papa.dto.AdminUserDetails;
 import com.papa.mbg.model.UmsAdmin;
 import com.papa.mbg.model.UmsPermission;
+import com.papa.mbg.model.UmsResource;
 import com.papa.service.UmsAdminService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //
 //    @Resource
 //    private PasswordEncoder encoder;
+    @Resource
+    private UmsAdminRoleRelationDAO adminRoleRelationDAO;
     /**
      * 注入密码加密器
      * @return
@@ -57,8 +62,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return username ->{
             UmsAdmin admin = umsAdminService.getAdminByName(username);
             if(admin!=null){
-                List<UmsPermission> permissions=umsAdminService.getPermissonsByAdminId(admin.getId());
-                return new AdminUserDetails(admin,permissions);
+//                List<UmsPermission> permissions=umsAdminService.getPermissonsByAdminId(admin.getId());
+//                return new AdminUserDetails(admin,permissions);
+                List<UmsResource> resourceList=adminRoleRelationDAO.getResourcesByAdmin(admin.getId());
+                UserDetails userDetails=new AdminUserDetails(admin,resourceList);
+                return userDetails;
             }
             return null;
         };
