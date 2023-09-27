@@ -5,6 +5,7 @@ import com.papa.common.utils.JwtTokenUtil;
 import com.papa.dao.UmsAdminRoleRelationDAO;
 import com.papa.dao.UserAdminPermissionDAO;
 import com.papa.dto.AdminParam;
+import com.papa.dto.UmsAdminPasswordParam;
 import com.papa.mbg.mapper.UmsAdminMapper;
 import com.papa.mbg.mapper.UmsAdminRoleRelationMapper;
 import com.papa.mbg.mapper.UmsRoleMapper;
@@ -135,12 +136,39 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     public int update(Long id, UmsAdmin newAdmin) {
         newAdmin.setId(id);
         UmsAdmin admin=getItem(id);
-        if(admin.getPassword().equals(newAdmin.getPassword())||newAdmin.getPassword()==null){
+        if(passwordEncoder.matches(newAdmin.getPassword(), admin.getPassword())||newAdmin.getPassword()==null){
             newAdmin.setPassword(null);//不需要变动
         }else{
             newAdmin.setPassword(passwordEncoder.encode(newAdmin.getPassword()));
         }
         return umsAdminMapper.updateByPrimaryKeySelective(newAdmin);
+    }
+
+    @Override
+    public int updatePassword(UmsAdminPasswordParam param) {
+        String userName = param.getUserName();
+        String rawPassword = param.getRawPassword();
+        String newPassword = param.getNewPassword();
+        if(StringUtils.isEmpty(userName)||StringUtils.isEmpty(rawPassword)||StringUtils.isEmpty(newPassword)){
+            //填写有为空
+            return -1;
+        }
+        UmsAdminExample example=new UmsAdminExample();
+        example.createCriteria().andUsernameEqualTo(userName);
+        List<UmsAdmin> adminList = umsAdminMapper.selectByExample(example);
+        if(adminList==null){
+            //用户不存在
+            return -2;
+        }
+        UmsAdmin admin=adminList.get(0);
+        if(!passwordEncoder.matches(rawPassword, admin.getPassword()))
+        {
+            //原始密码不正确
+            return -3;
+        }
+        admin.setPassword(passwordEncoder.encode(newPassword));
+        umsAdminMapper.updateByPrimaryKeySelective(admin);
+        return 1;
     }
 
     @Override

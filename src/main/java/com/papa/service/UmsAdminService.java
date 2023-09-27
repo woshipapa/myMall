@@ -1,6 +1,7 @@
 package com.papa.service;
 
 import com.papa.dto.AdminParam;
+import com.papa.dto.UmsAdminPasswordParam;
 import com.papa.mbg.model.*;
 import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public interface UmsAdminService {
 
     public int update(Long id,UmsAdmin admin);
 
-
+    public int updatePassword(UmsAdminPasswordParam param);
     public int delete(Long id);
 
     public int allocRoles(Long adminID,List<Long> roleIds);
