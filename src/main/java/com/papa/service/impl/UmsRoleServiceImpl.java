@@ -30,6 +30,11 @@ public class UmsRoleServiceImpl implements UmsRoleService {
     }
 
     @Override
+    public List<UmsRole> listAll() {
+        return roleMapper.selectByExample(new UmsRoleExample());
+    }
+
+    @Override
     public int create(UmsRole role) {
         role.setCreateTime(new Date());
         role.setSort(0);

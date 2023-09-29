@@ -9,6 +9,8 @@ import java.util.List;
 public interface UmsRoleService {
     public List<UmsRole> list(String keyword,Integer pageNum,Integer pageSize);
 
+    public List<UmsRole> listAll();
+
     public int create(UmsRole role);
 
     public int update(Long id,UmsRole role);
