@@ -9,6 +9,8 @@ public interface UmsResourceService {
 
     public List<UmsResource> list(String resourceName, String resourceUrl, Long categoryId, Integer pageNum, Integer pageSize);
 
+    public List<UmsResource> listAll();
+
 
     public int create(UmsResource umsResource);
 
