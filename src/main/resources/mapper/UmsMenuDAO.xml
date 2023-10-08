@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.papa.dao.UmsMenuDAO">
+<!--    <sql id="childrenId" >-->
+<!--        select id-->
+<!--        from `ums_menu`-->
+<!--        where parent_id = #{menuId}-->
+<!--    </sql>-->
+
+<!--    <sql id="parentId">-->
+<!--        select parent_id-->
+<!--        from `ums_menu`-->
+<!--        where id = #{menuId}-->
+<!--    </sql>-->
+
+    <update id="updateChildren" parameterType="java.lang.Long">
+        update `ums_menu` a
+        inner join `ums_menu` b on a.parent_id = b.id
+             set a.parent_id = b.parent_id
+         where  a.parent_id = #{menuId}
+    </update>
+
+    <delete id="deleteParent" parameterType="java.lang.Long">
+        delete from `ums_menu` where id = #{menudId}
+    </delete>
+</mapper>

@@ -9,6 +9,8 @@ public interface UmsMenuService {
 
     public List<UmsMenuNode> treeNodeList();
 
+    public int create(UmsMenu menu);
+
 
     public List<UmsMenu> list(Long parentId,Integer pageNum,Integer pageSize);
 
@@ -18,4 +20,6 @@ public interface UmsMenuService {
     public int delete(Long id);
 
     public UmsMenu getItem(Long id);
+
+//    public int updateStatus(Long id,UmsMenu menu);
 }
