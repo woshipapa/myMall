@@ -33,6 +33,12 @@ public class UmsResourceServiceImpl implements UmsResourceService {
     }
 
     @Override
+    public List<UmsResource> listAll() {
+        UmsResourceExample example=new UmsResourceExample();
+        return resourceMapper.selectByExample(example);
+    }
+
+    @Override
     public int create(UmsResource umsResource) {
         umsResource.setCreateTime(new Date());
         return resourceMapper.insertSelective(umsResource);
