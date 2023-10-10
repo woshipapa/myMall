@@ -14,7 +14,6 @@ import com.papa.mbg.mapper.UmsRoleMapper;
 import com.papa.mbg.model.*;
 import com.papa.service.UmsAdminService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -29,7 +29,7 @@ public class AdminUserDetails implements UserDetails {
 //                .map(p->new SimpleGrantedAuthority(p.getValue()))
 //                .collect(Collectors.toList());
         return resourceList.stream().filter(resource -> resource.getUrl()!=null)
-                .map(resource -> new SimpleGrantedAuthority(resource.getUrl()))
+                .map(resource -> new SimpleGrantedAuthority(resource.getId()+":"+resource.getName()))
                 .collect(Collectors.toList());
     }
 

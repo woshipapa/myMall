@@ -2,7 +2,7 @@ package com.papa.config;
 
 import com.papa.component.RestAuthenticationEntryPoint;
 import com.papa.component.RestfulAccessDeniedHandler;
-import com.papa.component.jwtAuthenticationTokenFilter;
+
 import com.papa.dao.UmsAdminRoleRelationDAO;
 import com.papa.dto.AdminUserDetails;
 import com.papa.mbg.model.UmsAdmin;
@@ -52,10 +52,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * 注入密码加密器
      * @return
      */
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder(){
+//        return new BCryptPasswordEncoder();
+//    }
 
     @Bean
     public UserDetailsService userDetailsService(){
@@ -114,10 +114,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder());
     }
 
-    @Bean
-    public jwtAuthenticationTokenFilter jwtAuthenticationTokenFilter(){
-        return new jwtAuthenticationTokenFilter();
-    }
+//    @Bean
+//    public jwtAuthenticationTokenFilter jwtAuthenticationTokenFilter(){
+//        return new jwtAuthenticationTokenFilter();
+//    }
 
     //显式配置
     @Bean

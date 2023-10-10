@@ -138,11 +138,25 @@
 
 <!--    </dependencies>-->
 
+
     <parent>
         <groupId>com.papa</groupId>
         <artifactId>papa_mall</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.papa</groupId>
+            <artifactId>mall-security</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.papa</groupId>
+            <artifactId>mall-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
 
 </project>
