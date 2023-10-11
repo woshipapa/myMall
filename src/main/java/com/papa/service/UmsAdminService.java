@@ -4,6 +4,7 @@ import com.papa.dto.AdminParam;
 import com.papa.dto.UmsAdminPasswordParam;
 import com.papa.mbg.model.*;
 import io.swagger.models.auth.In;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,4 +56,8 @@ public interface UmsAdminService {
     public List<UmsMenu> getMenusByAdmin(Long adminId);
 
     public List<UmsResource> getResourcesByAdmin(Long adminId);
+
+
+
+    public UserDetails loadUserDetailsByUserName(String userName);
 }

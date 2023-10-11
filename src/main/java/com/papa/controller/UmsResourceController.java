@@ -3,6 +3,7 @@ package com.papa.controller;
 import com.papa.common.api.CommonPage;
 import com.papa.common.api.CommonResult;
 import com.papa.mbg.model.UmsResource;
+import com.papa.security.component.DynamicSecurityMetadataSource;
 import com.papa.service.UmsResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,11 +19,14 @@ public class UmsResourceController {
 
     @Resource
     private UmsResourceService resourceService;
+    @Resource
+    private DynamicSecurityMetadataSource metadataSource;
 
     @ApiOperation("创建资源")
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     public CommonResult create(@RequestBody UmsResource resource){
         int count=resourceService.create(resource);
+        metadataSource.clearDataSource();
         if(count>0){
             return CommonResult.success(count);
         }else{
@@ -58,6 +62,7 @@ public class UmsResourceController {
     @RequestMapping(value = "/update/{menuId}",method = RequestMethod.POST)
     public CommonResult update(@PathVariable Long menuId,@RequestBody UmsResource resource){
         int count= resourceService.update(menuId,resource);
+        metadataSource.clearDataSource();
         if(count>0){
             return CommonResult.success(count);
         }else{
@@ -70,6 +75,7 @@ public class UmsResourceController {
     @RequestMapping(value = "/delete/{menuId}",method = RequestMethod.POST)
     public CommonResult delete(@PathVariable Long menuId){
         int count= resourceService.delete(menuId);
+        metadataSource.clearDataSource();
         if(count>0){
             return CommonResult.success(count);
         }else{

@@ -1,17 +1,19 @@
 package com.papa.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.papa.common.utils.JwtTokenUtil;
-import com.papa.common.utils.RequestUtil;
+
+import com.papa.common.util.RequestUtil;
 import com.papa.dao.UmsAdminRoleRelationDAO;
 import com.papa.dao.UserAdminPermissionDAO;
 import com.papa.dto.AdminParam;
+import com.papa.dto.AdminUserDetails;
 import com.papa.dto.UmsAdminPasswordParam;
 import com.papa.mbg.mapper.UmsAdminLoginLogMapper;
 import com.papa.mbg.mapper.UmsAdminMapper;
 import com.papa.mbg.mapper.UmsAdminRoleRelationMapper;
 import com.papa.mbg.mapper.UmsRoleMapper;
 import com.papa.mbg.model.*;
+import com.papa.security.util.JwtTokenUtil;
 import com.papa.service.UmsAdminService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -253,6 +256,16 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Override
     public List<UmsResource> getResourcesByAdmin(Long adminId) {
         return umsAdminRoleRelationDAO.getResourcesByAdmin(adminId);
+    }
+
+    @Override
+    public UserDetails loadUserDetailsByUserName(String userName) {
+        UmsAdmin admin = getAdminByName(userName);
+        if(admin!=null){
+            List<UmsResource> resources = getResourcesByAdmin(admin.getId());
+            return new AdminUserDetails(admin,resources);
+        }
+        throw new UsernameNotFoundException("用户名或者密码错误");
     }
 
 

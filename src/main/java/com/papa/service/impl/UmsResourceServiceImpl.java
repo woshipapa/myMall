@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.papa.mbg.mapper.UmsResourceMapper;
 import com.papa.mbg.model.UmsResource;
 import com.papa.mbg.model.UmsResourceExample;
+import com.papa.security.component.DynamicSecurityMetadataSource;
 import com.papa.service.UmsResourceService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -15,6 +16,7 @@ import java.util.List;
 public class UmsResourceServiceImpl implements UmsResourceService {
     @Resource
     private UmsResourceMapper resourceMapper;
+
     @Override
     public List<UmsResource> list(String resourceName, String resourceUrl, Long categoryId, Integer pageNum, Integer pageSize) {
         UmsResourceExample example=new UmsResourceExample();
