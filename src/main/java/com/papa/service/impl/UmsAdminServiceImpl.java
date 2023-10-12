@@ -43,8 +43,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Resource
     private UserAdminPermissionDAO dao;
-    @Resource
-    private UserDetailsService userDetailsService;
+//    @Resource
+//    private UserDetailsService userDetailsService;
 
     @Resource
     private JwtTokenUtil jwtTokenUtil;
@@ -105,7 +105,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Override
     public String login(String userName, String password) {
         if(StringUtils.hasText(userName)&&StringUtils.hasText(password)){
-            UserDetails userDetails= userDetailsService.loadUserByUsername(userName);
+            UserDetails userDetails= loadUserDetailsByUserName(userName);
             //验证密码
             if(!passwordEncoder.matches(password,userDetails.getPassword())){
                 throw new BadCredentialsException("密码错误");
