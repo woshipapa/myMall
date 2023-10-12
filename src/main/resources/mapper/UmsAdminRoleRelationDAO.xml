@@ -44,4 +44,12 @@
             left join `ums_resource` r on r.id = rr.resource_id
         where ar.admin_id = #{adminId}
     </select>
+
+    <select id="getAdminIdByResource" parameterType="java.lang.Long" resultType="java.lang.Long">
+        select a.id
+            from `ums_role_resource_relation` rr inner join
+                `ums_admin_role_relation` ar on rr.role_id = ar.role_id
+                inner join `ums_admin` a on a.id = ar.admin_id
+            where rr.resource_id = #{id}
+    </select>
 </mapper>

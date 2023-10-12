@@ -1,5 +1,7 @@
 package com.papa.service;
 
+import java.util.List;
+
 public interface RedisService {
     void set(String key,Object value);
 
@@ -12,5 +14,5 @@ public interface RedisService {
 
     Long increase(String key,long delta);
 
-
+    Long del(List<String> keys);
 }

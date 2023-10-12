@@ -5,6 +5,7 @@ import com.papa.mbg.mapper.UmsResourceMapper;
 import com.papa.mbg.model.UmsResource;
 import com.papa.mbg.model.UmsResourceExample;
 import com.papa.security.component.DynamicSecurityMetadataSource;
+import com.papa.service.UmsAdminCacheService;
 import com.papa.service.UmsResourceService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -51,15 +52,22 @@ public class UmsResourceServiceImpl implements UmsResourceService {
         return resourceMapper.selectByPrimaryKey(id);
     }
 
+    @Resource
+    private UmsAdminCacheService adminCacheService;
     @Override
     public int update(Long id, UmsResource resource)
     {
         resource.setId(id);
-        return resourceMapper.updateByPrimaryKeySelective(resource);
+        int count = resourceMapper.updateByPrimaryKeySelective(resource);
+        adminCacheService.delResourceListByResource(id);
+        return count;
     }
 
     @Override
     public int delete(Long id) {
-        return resourceMapper.deleteByPrimaryKey(id);
+
+        int count = resourceMapper.deleteByPrimaryKey(id);
+        adminCacheService.delResourceListByResource(id);
+        return count;
     }
 }

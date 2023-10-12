@@ -1,9 +1,6 @@
 package com.papa.dao;
 
-import com.papa.mbg.model.UmsAdminRoleRelation;
-import com.papa.mbg.model.UmsMenu;
-import com.papa.mbg.model.UmsResource;
-import com.papa.mbg.model.UmsRole;
+import com.papa.mbg.model.*;
 
 import java.util.List;
 
@@ -20,4 +17,7 @@ public interface UmsAdminRoleRelationDAO {
     public List<UmsMenu> getMenusByAdmin(Long adminId);
 
     public List<UmsResource> getResourcesByAdmin(Long adminId);
+
+
+    public List<Long> getAdminIdByResource(Long resourceId);
 }

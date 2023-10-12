@@ -70,3 +70,10 @@ secure:
       - /admin/info
       - /admin/logout
       - /minio/upload
+redis:
+  database: mall
+  key:
+    admin: "ums:admin"
+    resourceList: "ums:resourceList"
+  expire:
+    common: 86400
