@@ -6,14 +6,16 @@ import com.papa.mbg.mapper.UmsAdminRoleRelationMapper;
 import com.papa.mbg.model.UmsAdmin;
 import com.papa.mbg.model.UmsAdminRoleRelation;
 import com.papa.mbg.model.UmsAdminRoleRelationExample;
+import com.papa.mbg.model.UmsResource;
 import com.papa.service.RedisService;
 import com.papa.service.UmsAdminCacheService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
 
 
@@ -28,6 +30,8 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     private String REDIS_DATABASE;
 
 
+    @Value("${redis.expire.common}")
+    private Long expire;
 
 
     @Resource
@@ -53,6 +57,10 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
         }
     }
 
+    /**
+     * 以下俩个是当相关用户的角色改变(角色分配的资源改变)时，要对redis缓存中的用户资源信息删除
+     * @param roleId
+     */
     @Override
     public void delResourceListByRole(Long roleId) {
         UmsAdminRoleRelationExample example = new UmsAdminRoleRelationExample();
@@ -81,5 +89,37 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
 
     }
 
+    /**
+     * 当用户分配的角色改变时，对缓存修改
+     * @param adminId
+     */
+
+    @Override
+    public void delResourceListByAdmin(Long adminId) {
+        String prefix = REDIS_DATABASE+":"+REDIS_KEY_RESOURCE_LIST+":";
+        redisService.del(prefix+adminId);
+    }
+
+
+
+    public void setResourceList(Long adminId,List<UmsResource> resources){
+        String key = REDIS_DATABASE+":"+REDIS_KEY_RESOURCE_LIST+":"+adminId;
+        redisService.set(key,resources,expire);
+    }
+
+    public List<UmsResource> getResourceList(Long adminId){
+        return (List<UmsResource>)redisService.get(REDIS_DATABASE+":"+REDIS_KEY_RESOURCE_LIST+":"+adminId);
+    }
+
+    @Override
+    public void setAdmin(String username,UmsAdmin umsAdmin) {
+        String key = REDIS_DATABASE+":"+REDIS_KEY_ADMIN+":"+username;
+        redisService.set(key,umsAdmin,expire);
+    }
+
+    @Override
+    public UmsAdmin getAdmin(String username) {
+        return (UmsAdmin) redisService.get(REDIS_DATABASE+":"+REDIS_KEY_ADMIN+":"+username);
+    }
 
 }

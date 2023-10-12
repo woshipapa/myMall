@@ -1,6 +1,8 @@
 package com.papa.service.impl;
 
 import com.papa.service.RedisService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -11,12 +13,18 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RedisServiceImpl implements RedisService {
 
-    @Resource
+    @Autowired
     private RedisTemplate redisTemplate;
     @Override
     public void set(String key, Object value) {
         redisTemplate.opsForValue().set(key,value);
     }
+
+    @Override
+    public void set(String key, Object value, long expire) {
+        redisTemplate.opsForValue().set(key,value,expire,TimeUnit.SECONDS);
+    }
+
 
     @Override
     public Object get(String key) {
@@ -41,5 +49,10 @@ public class RedisServiceImpl implements RedisService {
 
     public Long del(List<String> keyList){
         return redisTemplate.delete(keyList);
+    }
+
+    @Override
+    public Boolean del(String key) {
+        return redisTemplate.delete(key);
     }
 }

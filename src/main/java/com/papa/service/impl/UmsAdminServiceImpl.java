@@ -1,8 +1,10 @@
 package com.papa.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.github.pagehelper.PageHelper;
 
 import com.papa.common.util.RequestUtil;
+import com.papa.common.util.SpringUtil;
 import com.papa.dao.UmsAdminRoleRelationDAO;
 import com.papa.dao.UserAdminPermissionDAO;
 import com.papa.dto.AdminParam;
@@ -14,6 +16,7 @@ import com.papa.mbg.mapper.UmsAdminRoleRelationMapper;
 import com.papa.mbg.mapper.UmsRoleMapper;
 import com.papa.mbg.model.*;
 import com.papa.security.util.JwtTokenUtil;
+import com.papa.service.UmsAdminCacheService;
 import com.papa.service.UmsAdminService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,6 +34,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 @Service
@@ -58,12 +62,16 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private PasswordEncoder passwordEncoder;
     @Override
     public UmsAdmin getAdminByName(String name) {
+        UmsAdmin admin = getCache().getAdmin(name);
+        if(admin!=null) return admin;
         UmsAdminExample example=new UmsAdminExample();
         UmsAdminExample.Criteria criteria = example.createCriteria();
         criteria.andUsernameEqualTo(name);
         List<UmsAdmin> admins=umsAdminMapper.selectByExample(example);
-        if(admins!=null&&admins.size()>0){
-            return admins.get(0);
+        if(CollUtil.isNotEmpty(admins)){
+            admin = admins.get(0);
+            getCache().setAdmin(name,admin);
+            return admin;
         }
         return null;
     }
@@ -202,7 +210,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Override
     public int delete(Long id) {
-        return umsAdminMapper.deleteByPrimaryKey(id);
+        int count = umsAdminMapper.deleteByPrimaryKey(id);
+        getCache().delResourceListByAdmin(id);
+        return count;
     }
     @Resource
     private UmsAdminRoleRelationMapper adminRoleRelationMapper;
@@ -237,6 +247,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             //更新一下每个角色下拥有的用户数
             umsAdminRoleRelationDAO.updateAdminCountInRole(roleIds,"add");
         }
+        getCache().delResourceListByAdmin(adminID);
         return affects;
     }
 
@@ -255,7 +266,12 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Override
     public List<UmsResource> getResourcesByAdmin(Long adminId) {
-        return umsAdminRoleRelationDAO.getResourcesByAdmin(adminId);
+        List<UmsResource> resourceList = getCache().getResourceList(adminId);
+        if(CollUtil.isNotEmpty(resourceList)) return resourceList;
+        resourceList = umsAdminRoleRelationDAO.getResourcesByAdmin(adminId);
+        if(CollUtil.isNotEmpty(resourceList))
+            getCache().setResourceList(adminId,resourceList);
+        return resourceList;
     }
 
     @Override
@@ -269,4 +285,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
 
+    private UmsAdminCacheService getCache(){
+        return  SpringUtil.getBean(UmsAdminCacheService.class);
+    }
 }

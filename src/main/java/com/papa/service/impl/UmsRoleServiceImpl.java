@@ -6,6 +6,7 @@ import com.papa.mbg.mapper.UmsRoleMapper;
 import com.papa.mbg.mapper.UmsRoleMenuRelationMapper;
 import com.papa.mbg.mapper.UmsRoleResourceRelationMapper;
 import com.papa.mbg.model.*;
+import com.papa.service.UmsAdminCacheService;
 import com.papa.service.UmsRoleService;
 import org.apache.ibatis.annotations.Result;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ import java.util.List;
 public class UmsRoleServiceImpl implements UmsRoleService {
     @Resource
     private UmsRoleMapper roleMapper;
+    @Resource
+    private UmsAdminCacheService adminCacheService;
     @Override
     public List<UmsRole> list(String keyword, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum,pageSize);
@@ -50,8 +53,9 @@ public class UmsRoleServiceImpl implements UmsRoleService {
 
     @Override
     public int delete(Long id) {
-        return roleMapper.deleteByPrimaryKey(id);
-
+        int count = roleMapper.deleteByPrimaryKey(id);
+        adminCacheService.delResourceListByRole(id);
+        return count;
     }
 
     @Resource
@@ -88,6 +92,7 @@ public class UmsRoleServiceImpl implements UmsRoleService {
             relation.setResourceId(resourceId);
             roleResourceRelationMapper.insertSelective(relation);
         }
+        adminCacheService.delResourceListByRole(roleId);
         return resourceIds.size();
     }
     @Resource
