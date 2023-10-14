@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsSkuStockDAO">
+    <insert id="insertList">
+        insert into `pms_sku_stock`
+        values (`product_id`,`sku_code`,`price`,`stock`,`low_stock`,`pic`,`sale`,`sp_data`)
+        <foreach collection="skuStockList" separator="," index="index" item="it">
+            (
+                #{it.productId,jdbcType=BIGINT},
+                #{it.skuCode,jdbcType=VARCHAR},
+                #{it.price,jdbcType=DECIMAL},
+                #{it.stock,jdbcType=INTEGER},
+                #{it.lowStock,jdbcType=INTEGER},
+                #{it.pic,jdbcType=VARCHAR},
+                #{it.sale,jdbcType=INTEGER},
+                #{it.sp_data,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+</mapper>

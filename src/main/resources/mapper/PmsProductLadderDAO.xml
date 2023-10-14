@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsProductLadderDAO">
+    <insert id="insertList">
+        insert into `pms_product_ladder`
+            values (`product_id`,`count`,`discount`,`price`)
+            <foreach collection="productLadderList" separator="," item="it" index="index">
+                (
+                    #{it.productId},
+                    #{it.count},
+                    #{it.discount},
+                    #{it.price}
+                )
+            </foreach>
+    </insert>
+</mapper>

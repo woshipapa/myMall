@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsMemberPriceDAO">
+    <insert id="insertList">
+        insert into `pms_member_price`
+            values(`product_id`,`member_level_id`,`member_price`,`member_level_name`)
+            <foreach collection="memberPriceList" separator="," item="it" index="index">
+                (
+                    #{it.productId,jdbcType=BIGINT},
+                    #{it.memberLevelId,jdbcType=BIGINT},
+                    #{it.memberPrice,jdbcType=DECIMAL},
+                    #{it.memberLevelName,jdbcType=VARCHAR}
+                )
+            </foreach>
+
+    </insert>
+</mapper>
