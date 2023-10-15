@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.papa.dao.PmsProductFullReductionDAO">
     <insert id="insertList">
-        insert into `pms_produtct_full_reduction`
-        values (`product_id`,`full_price`,`reduce_price`)
+        insert into `pms_produtct_full_reduction`(`product_id`,`full_price`,`reduce_price`)
+        values
         <foreach collection="productFullReductionList" separator="," index="index" item="it">
             (
                 #{it.productId},

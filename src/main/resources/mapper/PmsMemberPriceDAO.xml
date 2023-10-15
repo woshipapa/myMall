@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.papa.dao.PmsMemberPriceDAO">
     <insert id="insertList">
-        insert into `pms_member_price`
-            values(`product_id`,`member_level_id`,`member_price`,`member_level_name`)
+        insert into `pms_member_price`(`product_id`,`member_level_id`,`member_price`,`member_level_name`)
+            values
             <foreach collection="memberPriceList" separator="," item="it" index="index">
                 (
                     #{it.productId,jdbcType=BIGINT},

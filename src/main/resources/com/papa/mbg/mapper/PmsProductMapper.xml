@@ -196,7 +196,7 @@
       #{productCategoryName,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{detailDesc,jdbcType=LONGVARCHAR}, 
       #{detailHtml,jdbcType=LONGVARCHAR}, #{detailMobileHtml,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.papa.mbg.model.PmsProduct">
+  <insert id="insertSelective" parameterType="com.papa.mbg.model.PmsProduct" useGeneratedKeys="true" keyProperty="id">
     insert into pms_product
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
