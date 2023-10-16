@@ -1,20 +1,23 @@
 package com.papa.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.github.pagehelper.PageHelper;
 import com.papa.dao.*;
 import com.papa.dto.PmsProductParam;
+import com.papa.dto.PmsProductQueryParam;
 import com.papa.dto.PmsProductResult;
 import com.papa.mbg.mapper.*;
 import com.papa.mbg.model.*;
 import com.papa.service.PmsProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -219,7 +222,92 @@ public class PmsProductServiceImpl implements PmsProductService {
             }
 
         }
-
-
     }
+
+
+
+    public List<PmsProduct> list(PmsProductQueryParam param,Integer pageNum,Integer pageSize){
+        PageHelper.startPage(pageNum,pageSize);
+        PmsProductExample example = new PmsProductExample();
+        PmsProductExample.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(param.getKeyword())){
+            criteria.andNameLike(param.getKeyword());
+        }
+        if(StringUtils.hasText(param.getProductSn())){
+            criteria.andProductSnEqualTo(param.getProductSn());
+        }
+        if(param.getBrandId()!=null){
+            criteria.andBrandIdEqualTo(param.getBrandId());
+        }
+        if(param.getCategoryId()!=null){
+            criteria.andProductCategoryIdEqualTo(param.getCategoryId());
+        }
+        if(param.getPublicStatus()!=null){
+            criteria.andPublishStatusEqualTo(param.getPublicStatus());
+        }
+        if(param.getVerifyStatus()!=null){
+            criteria.andVerifyStatusEqualTo(param.getVerifyStatus());
+        }
+        return productMapper.selectByExample(example);
+    }
+
+    @Resource
+    private PmsProductVerifyDAO verifyDAO;
+
+
+    public int updateVerifyStatus(List<Long> ids,Integer verifyStatus,String details){
+        PmsProduct product = new PmsProduct();
+        product.setVerifyStatus(verifyStatus);
+        PmsProductExample example = new PmsProductExample();
+        example.createCriteria().andIdIn(ids);
+        int count = productMapper.updateByExampleSelective(product,example);
+        List<PmsProductVertifyRecord> list = new ArrayList<>();
+        //插入审核记录
+        for(Long id:ids){
+            PmsProductVertifyRecord record = new PmsProductVertifyRecord();
+            record.setStatus(verifyStatus);
+            record.setProductId(id);
+            record.setDetail(details);
+            record.setCreateTime(new Date());
+            record.setVertifyMan(SecurityContextHolder.getContext().getAuthentication().getName());
+            list.add(record);
+        }
+        verifyDAO.insertList(list);
+        return count;
+    }
+
+
+    public int updatePublishStatus(List<Long> ids,Integer status){
+        PmsProduct product = new PmsProduct();
+        product.setPublishStatus(status);
+        PmsProductExample example = new PmsProductExample();
+        example.createCriteria().andIdIn(ids);
+        return productMapper.updateByExampleSelective(product,example);
+    }
+
+    public int updateRecommendStatus(List<Long> ids,Integer status){
+        PmsProduct product = new PmsProduct();
+        product.setRecommandStatus(status);
+        PmsProductExample example = new PmsProductExample();
+        example.createCriteria().andIdIn(ids);
+        return productMapper.updateByExampleSelective(product,example);
+    }
+
+
+    public int updateNewStatus(List<Long> ids,Integer status){
+        PmsProduct product = new PmsProduct();
+        product.setNewStatus(status);
+        PmsProductExample example = new PmsProductExample();
+        example.createCriteria().andIdIn(ids);
+        return productMapper.updateByExampleSelective(product,example);
+    }
+
+    public int updateDeleteStatus(List<Long> ids,Integer status){
+        PmsProduct product = new PmsProduct();
+        product.setDeleteStatus(status);
+        PmsProductExample example = new PmsProductExample();
+        example.createCriteria().andIdIn(ids);
+        return productMapper.updateByExampleSelective(product,example);
+    }
+
 }
