@@ -4,7 +4,7 @@
     <insert id="insertList">
         insert into `pms_sku_stock`(`product_id`,`sku_code`,`price`,`stock`,`low_stock`,`pic`,`sale`,`sp_data`)
         values
-        <foreach collection="skuStockList" separator="," index="index" item="it">
+        <foreach collection="list" separator="," index="index" item="it">
             (
                 #{it.productId,jdbcType=BIGINT},
                 #{it.skuCode,jdbcType=VARCHAR},
@@ -17,4 +17,20 @@
             )
         </foreach>
     </insert>
+    <update id="replaceList">
+        replace into `pms_sku_stock`(`product_id`,`sku_code`,`price`,`stock`,`low_stock`,`pic`,`sale`,`sp_data`)
+            values
+            <foreach collection="list" separator="," item="it" index="index">
+                (
+                #{it.productId,jdbcType=BIGINT},
+                #{it.skuCode,jdbcType=VARCHAR},
+                #{it.price,jdbcType=DECIMAL},
+                #{it.stock,jdbcType=INTEGER},
+                #{it.lowStock,jdbcType=INTEGER},
+                #{it.pic,jdbcType=VARCHAR},
+                #{it.sale,jdbcType=INTEGER},
+                #{it.sp_data,jdbcType=VARCHAR}
+                )
+            </foreach>
+    </update>
 </mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsProductCategoryDAO">
+    <update id="updateParent" parameterType="java.lang.Long">
+        update `pms_product_category` c1
+        left join `pms_product_category` c2 on c2.parent_id = c1.id
+        set
+        c2.`parent_id` = c1.`parent_id`
+        where c2.`parent_id` = #{id}
+    </update>
+</mapper>
