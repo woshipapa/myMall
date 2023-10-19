@@ -24,4 +24,8 @@ public interface PmsProductCategoryService {
     @Transactional
     public int create(PmsProductCategoryParam param);
 
+    public int updateNavStatus(List<Long> ids,Integer status);
+
+    public int updateShowStatus(List<Long> ids,Integer status);
+
 }

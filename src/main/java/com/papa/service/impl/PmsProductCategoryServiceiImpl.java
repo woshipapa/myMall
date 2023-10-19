@@ -106,6 +106,25 @@ public class PmsProductCategoryServiceiImpl implements PmsProductCategoryService
         insertRelationList(categoryId,param);
         return count;
     }
+
+    @Override
+    public int updateNavStatus(List<Long> ids, Integer status) {
+        PmsProductCategoryExample example = new PmsProductCategoryExample();
+        example.createCriteria().andIdIn(ids);
+        PmsProductCategory category = new PmsProductCategory();
+        category.setNavStatus(status);
+        return categoryMapper.updateByExampleSelective(category,example);
+    }
+
+    @Override
+    public int updateShowStatus(List<Long> ids, Integer status) {
+        PmsProductCategoryExample example = new PmsProductCategoryExample();
+        example.createCriteria().andIdIn(ids);
+        PmsProductCategory category =  new PmsProductCategory();
+        category.setShowStatus(status);
+        return categoryMapper.updateByExampleSelective(category,example);
+    }
+
     private void insertRelationList(Long categoryId,PmsProductCategoryParam param){
         List<Long> attributeIds = param.getProductAttributeIdList();
         for(Long attributeId:attributeIds){

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsProductAttributeDAO">
+    <resultMap id="attributeMap" type="com.papa.dto.PmsProductAttributeCategoryItem">
+        <id column="category_id" property="id"></id>
+        <result column="category_name" property="name"></result>
+        <result column="category_attribute_count" property="attributeCount"></result>
+        <result column="category_param_count" property="paramCount"></result>
+        <collection property="attributeList" ofType="com.papa.mbg.model.PmsProductAttribute"  resultMap="com.papa.mbg.mapper.PmsProductAttributeMapper.BaseResultMap"></collection>
+    </resultMap>
+
+    <select id="getItem" parameterType="java.lang.Long" resultMap="attributeMap">
+        select a.*,
+               ac.id as category_id,
+               ac.name as category_name,
+               ac.attribute_count as category_attribute_count,
+               ac.param_count as category_param_count
+            from `pms_product_attribute` a inner join
+                `pms_product_attribute_category` ac  on a.product_attribute_category_id = ac.id
+            where a.id = #{id}
+    </select>
+</mapper>
