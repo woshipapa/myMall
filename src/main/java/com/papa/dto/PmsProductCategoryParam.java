@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Getter
@@ -18,6 +20,7 @@ public class PmsProductCategoryParam {
     @ApiModelProperty("上级分类id")
     private Long parentId;
 
+    @NotEmpty
     @ApiModelProperty("分类名称")
     private String name;
     @ApiModelProperty("分类单位")
@@ -30,7 +33,7 @@ public class PmsProductCategoryParam {
     @FlagValidator(value = {"0","1"},message = "状态只能为0或者1")
     @ApiModelProperty("是否进行显示")
     private Integer showStatus;
-
+    @Min(0)
     @ApiModelProperty("排序")
     private Integer sort;
 

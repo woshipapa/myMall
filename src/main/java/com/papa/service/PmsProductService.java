@@ -32,4 +32,5 @@ public interface PmsProductService {
 
     public int updateDeleteStatus(List<Long> ids,Integer status);
 
+    public int updateNewStatus(List<Long> ids,Integer status);
 }
