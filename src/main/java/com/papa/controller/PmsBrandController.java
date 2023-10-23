@@ -29,7 +29,6 @@ public class PmsBrandController {
     @ApiOperation("获得所有品牌信息")
     @GetMapping("/listAll")
     @ResponseBody
-    @PreAuthorize(value="hasAuthority('pms:brand:read')")
     public CommonResult listAllBrand(){
         return CommonResult.success(pmsBrandService.listAllBrand());
     }
@@ -41,7 +40,7 @@ public class PmsBrandController {
     public CommonResult createBrand(@Validated @RequestBody PmsBrandParam brand){
         Integer affects=pmsBrandService.createBrand(brand);
         if(affects>0){
-            return CommonResult.success(brand);
+            return CommonResult.success(affects);
         }else{
             return CommonResult.failed("创建品牌失败!");
         }
@@ -50,7 +49,6 @@ public class PmsBrandController {
     @ApiOperation("删除品牌")
     @GetMapping("/delete/{brandId}")
     @ResponseBody
-    @PreAuthorize("hasAuthority('pms:brand:delete')")
     public CommonResult deleteBrand(@PathVariable("brandId")Long id){
         Integer affects=pmsBrandService.deleteBrand(id);
 
@@ -65,21 +63,24 @@ public class PmsBrandController {
     @ApiOperation("更新品牌")
     @PostMapping("/update/{brandId}")
     @ResponseBody
-    @PreAuthorize("hasAuthority('pms:brand:update')")
     public CommonResult updateBrand(@PathVariable("brandId")Long id,@Validated@RequestBody PmsBrandParam brand){
         Integer affects=pmsBrandService.updateBrand(id,brand);
         if(affects>0){
-            return CommonResult.success(null);
+            return CommonResult.success(affects);
         }else{
             return CommonResult.failed("更新失败");
         }
     }
-
+    @ApiOperation(value = "根据编号查询品牌信息")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<PmsBrand> getItem(@PathVariable("id") Long id) {
+        return CommonResult.success(pmsBrandService.getBrand(id));
+    }
 
     @ApiOperation("分页查询品牌")
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody
-    @PreAuthorize("hasAuthority('pms:brand:read')")
     public CommonResult listBrand(@RequestParam(value = "keyword",required = false) String keyword,
             @RequestParam(value = "pageNum",defaultValue = "1")
                                   @ApiParam("页码") Integer pageNum,
@@ -90,4 +91,33 @@ public class PmsBrandController {
         List<PmsBrand> pmsBrands=pmsBrandService.listBrand(keyword,pageNum,pageSize);
         return CommonResult.success(CommonPage.restPage(pmsBrands));
     }
+
+    @ApiOperation(value = "批量更新显示状态")
+    @RequestMapping(value = "/update/showStatus", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateShowStatus(@RequestParam("ids") List<Long> ids,
+                                         @RequestParam("showStatus") Integer showStatus) {
+        int count = pmsBrandService.updateShowStatus(ids, showStatus);
+        if (count > 0) {
+            return CommonResult.success(count);
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
+    @ApiOperation(value = "批量更新厂家制造商状态")
+    @RequestMapping(value = "/update/factoryStatus", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateFactoryStatus(@RequestParam("ids") List<Long> ids,
+                                            @RequestParam("factoryStatus") Integer factoryStatus) {
+        int count = pmsBrandService.updateFactoryStatus(ids, factoryStatus);
+        if (count > 0) {
+            return CommonResult.success(count);
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
+
 }
+

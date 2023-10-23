@@ -8,5 +8,5 @@ public interface PmsSkuStockService {
 
     public List<PmsSkuStock> getList(Long productId,String keyword);
 
-
+    public int update(Long productId,List<PmsSkuStock> list);
 }
