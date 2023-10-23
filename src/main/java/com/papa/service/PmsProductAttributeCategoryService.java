@@ -17,6 +17,6 @@ public interface PmsProductAttributeCategoryService {
 
     public List<PmsProductAttributeCategory> list();
 
-
+    public PmsProductAttributeCategory getItem(Long id);
 
 }

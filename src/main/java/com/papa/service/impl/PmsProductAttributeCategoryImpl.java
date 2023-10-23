@@ -47,4 +47,9 @@ public class PmsProductAttributeCategoryImpl implements PmsProductAttributeCateg
     public List<PmsProductAttributeCategory> list() {
         return attributeCategoryMapper.selectByExample(new PmsProductAttributeCategoryExample());
     }
+
+    @Override
+    public PmsProductAttributeCategory getItem(Long id) {
+        return attributeCategoryMapper.selectByPrimaryKey(id);
+    }
 }

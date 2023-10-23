@@ -3,6 +3,7 @@ package com.papa.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.papa.dao.PmsProductAttributeDAO;
 import com.papa.dto.PmsProductAttributeCategoryItem;
+import com.papa.dto.PmsProductAttributeParam;
 import com.papa.mbg.mapper.PmsProductAttributeCategoryMapper;
 import com.papa.mbg.mapper.PmsProductAttributeMapper;
 import com.papa.mbg.model.PmsProductAttribute;
@@ -36,7 +37,9 @@ public class PmsProductAttributeServiceImpl implements PmsProductAttributeServic
         return productAttributeMapper.selectByExample(example);
     }
     @Override
-    public int create(PmsProductAttribute productAttribute) {
+    public int create(PmsProductAttributeParam productAttributeParam) {
+        PmsProductAttribute productAttribute = new PmsProductAttribute();
+        BeanUtils.copyProperties(productAttributeParam,productAttribute);
         int count = productAttributeMapper.insertSelective(productAttribute);
         //更新与商品属性相关联的商品属性类型表,attribute_count,param_count
         PmsProductAttributeCategory attributeCategory = attributeCategoryMapper.selectByPrimaryKey(productAttribute.getProductAttributeCategoryId());
@@ -57,22 +60,28 @@ public class PmsProductAttributeServiceImpl implements PmsProductAttributeServic
     }
 
     @Override
-    public int update(Long id, PmsProductAttribute productAttribute) {
+    public int update(Long id, PmsProductAttributeParam productAttributeParam) {
+        PmsProductAttribute productAttribute = new PmsProductAttribute();
+        BeanUtils.copyProperties(productAttributeParam,productAttribute);
         productAttribute.setId(id);
         return productAttributeMapper.updateByPrimaryKeySelective(productAttribute);
     }
 
     @Override
-    public int delete(Long id) {
-        PmsProductAttributeCategoryItem item = attributeDAO.getItem(id);
-        int count = productAttributeMapper.deleteByPrimaryKey(id);
+    public int delete(List<Long> ids) {
+        PmsProductAttributeCategoryItem item = attributeDAO.getItem(ids.get(0));
+        int count = 0;
+        for(Long id:ids){
+            productAttributeMapper.deleteByPrimaryKey(id);
+            count++;
+        }
         int type = item.getAttributeList().get(0).getType();
         PmsProductAttributeCategory attributeCategory = new PmsProductAttributeCategory();
         BeanUtils.copyProperties(item,attributeCategory);
         if(type == 0){
-            attributeCategory.setAttributeCount(attributeCategory.getAttributeCount()-1);
+            attributeCategory.setAttributeCount(attributeCategory.getAttributeCount()-ids.size());
         }else{
-            attributeCategory.setParamCount(attributeCategory.getParamCount()-1);
+            attributeCategory.setParamCount(attributeCategory.getParamCount()- ids.size());
         }
         attributeCategoryMapper.updateByPrimaryKeySelective(attributeCategory);
         return count;
