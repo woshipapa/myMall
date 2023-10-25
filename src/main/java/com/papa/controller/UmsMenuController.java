@@ -8,7 +8,6 @@ import com.papa.service.UmsMenuService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.annotation.RequestScope;
 
 import javax.annotation.Resource;
 import java.util.List;

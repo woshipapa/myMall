@@ -2,10 +2,9 @@ package com.papa.service;
 
 import com.papa.dto.AdminParam;
 import com.papa.dto.UmsAdminPasswordParam;
-import com.papa.mbg.model.*;
-import io.swagger.models.auth.In;
+import com.papa.mbg.model.UmsAdmin;
+import com.papa.mbg.model.UmsPermission;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

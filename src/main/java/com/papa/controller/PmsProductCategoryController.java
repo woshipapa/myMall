@@ -4,7 +4,6 @@ import com.papa.common.api.CommonPage;
 import com.papa.common.api.CommonResult;
 import com.papa.dto.PmsProductCategoryParam;
 import com.papa.dto.PmsProductCategoryWithChildrenItem;
-import com.papa.dto.PmsProductParam;
 import com.papa.mbg.model.PmsProductCategory;
 import com.papa.service.PmsProductCategoryService;
 import io.swagger.annotations.Api;

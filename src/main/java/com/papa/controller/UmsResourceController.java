@@ -7,7 +7,6 @@ import com.papa.security.component.DynamicSecurityMetadataSource;
 import com.papa.service.UmsResourceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

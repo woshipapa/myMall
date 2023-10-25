@@ -9,7 +9,6 @@ import com.papa.mbg.mapper.PmsProductAttributeMapper;
 import com.papa.mbg.model.PmsProductAttribute;
 import com.papa.mbg.model.PmsProductAttributeCategory;
 import com.papa.mbg.model.PmsProductAttributeExample;
-import com.papa.service.PmsProductAttributeCategoryService;
 import com.papa.service.PmsProductAttributeService;
 import org.springframework.beans.BeanUtils;
 

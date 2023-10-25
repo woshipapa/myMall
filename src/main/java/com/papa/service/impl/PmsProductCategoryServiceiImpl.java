@@ -1,6 +1,5 @@
 package com.papa.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import com.github.pagehelper.PageHelper;
 import com.papa.dao.PmsProductCategoryDAO;
 import com.papa.dto.PmsProductCategoryParam;
@@ -8,10 +7,8 @@ import com.papa.dto.PmsProductCategoryWithChildrenItem;
 import com.papa.mbg.mapper.PmsProductCategoryAttributeRelationMapper;
 import com.papa.mbg.mapper.PmsProductCategoryMapper;
 import com.papa.mbg.mapper.PmsProductMapper;
-import com.papa.mbg.model.*;
 import com.papa.service.PmsProductCategoryService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
 
 import javax.annotation.Resource;
 import java.util.List;

@@ -4,7 +4,6 @@ import com.papa.dto.PmsProductParam;
 import com.papa.dto.PmsProductQueryParam;
 import com.papa.dto.PmsProductResult;
 import com.papa.mbg.model.PmsProduct;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

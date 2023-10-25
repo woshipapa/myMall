@@ -5,10 +5,8 @@ import com.papa.dao.UmsRoleDAO;
 import com.papa.mbg.mapper.UmsRoleMapper;
 import com.papa.mbg.mapper.UmsRoleMenuRelationMapper;
 import com.papa.mbg.mapper.UmsRoleResourceRelationMapper;
-import com.papa.mbg.model.*;
 import com.papa.service.UmsAdminCacheService;
 import com.papa.service.UmsRoleService;
-import org.apache.ibatis.annotations.Result;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

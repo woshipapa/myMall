@@ -5,7 +5,6 @@ import com.papa.mbg.mapper.PmsProductAttributeCategoryMapper;
 import com.papa.mbg.model.PmsProductAttributeCategory;
 import com.papa.mbg.model.PmsProductAttributeCategoryExample;
 import com.papa.service.PmsProductAttributeCategoryService;
-import com.papa.service.PmsProductCategoryService;
 
 import javax.annotation.Resource;
 import java.util.List;

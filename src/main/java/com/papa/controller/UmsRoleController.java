@@ -5,7 +5,6 @@ import com.papa.common.api.CommonResult;
 import com.papa.mbg.CommentGenerator;
 import com.papa.mbg.model.UmsRole;
 import com.papa.service.UmsRoleService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

@@ -6,8 +6,6 @@ import com.papa.dao.*;
 import com.papa.dto.PmsProductParam;
 import com.papa.dto.PmsProductQueryParam;
 import com.papa.dto.PmsProductResult;
-import com.papa.mbg.mapper.*;
-import com.papa.mbg.model.*;
 import com.papa.service.PmsProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

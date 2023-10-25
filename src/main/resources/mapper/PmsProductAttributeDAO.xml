@@ -6,7 +6,7 @@
         <result column="category_name" property="name"></result>
         <result column="category_attribute_count" property="attributeCount"></result>
         <result column="category_param_count" property="paramCount"></result>
-        <collection property="attributeList" ofType="com.papa.mbg.model.PmsProductAttribute"  resultMap="com.papa.mbg.mapper.PmsProductAttributeMapper.BaseResultMap"></collection>
+        <collection property="attributeList" ofType="com.papa.mbg.model.PmsProductAttribute" resultMap="com.papa.mbg.mapper.PmsProductAttributeMapper.BaseResultMap"></collection>
     </resultMap>
 
     <select id="getItem" parameterType="java.lang.Long" resultMap="attributeMap">

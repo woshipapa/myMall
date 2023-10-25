@@ -4,7 +4,6 @@ import com.papa.common.api.CommonPage;
 import com.papa.common.api.CommonResult;
 import com.papa.mbg.CommentGenerator;
 import com.papa.nosql.es.document.EsProduct;
-import com.papa.nosql.es.document.EsProductAttributeValue;
 import com.papa.service.EsProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

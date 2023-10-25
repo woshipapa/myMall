@@ -7,7 +7,6 @@ import com.papa.mbg.model.PmsProductAttribute;
 import com.papa.service.PmsProductAttributeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import javafx.scene.chart.ValueAxis;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

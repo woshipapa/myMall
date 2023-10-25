@@ -1,7 +1,6 @@
 package com.papa.service;
 
 import com.papa.mbg.model.UmsResource;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 
 import java.util.List;
 

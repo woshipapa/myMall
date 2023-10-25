@@ -12,7 +12,6 @@ import com.papa.service.PmsBrandService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import sun.swing.StringUIClientPropertyKey;
 
 import javax.annotation.Resource;
 import java.util.List;

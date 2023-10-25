@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.papa.mbg.mapper.UmsResourceMapper;
 import com.papa.mbg.model.UmsResource;
 import com.papa.mbg.model.UmsResourceExample;
-import com.papa.security.component.DynamicSecurityMetadataSource;
 import com.papa.service.UmsAdminCacheService;
 import com.papa.service.UmsResourceService;
 import org.springframework.stereotype.Service;
