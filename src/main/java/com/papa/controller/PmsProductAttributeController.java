@@ -21,6 +21,13 @@ public class PmsProductAttributeController {
 
     @Resource
     private PmsProductAttributeService attributeService;
+    @ApiOperation("分页获取所有属性信息")
+    @RequestMapping(value = "/listAll",method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult listAll(@RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
+                                @RequestParam(value = "pageSize",defaultValue = "5") Integer pageSize){
+        return CommonResult.success(CommonPage.restPage(attributeService.listAll(pageNum,pageSize)));
+    }
     @RequestMapping(value = "/list/{cid}",method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation("根据分类查询属性列表或者参数列表")

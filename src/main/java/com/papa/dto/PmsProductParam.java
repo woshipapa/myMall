@@ -1,5 +1,6 @@
 package com.papa.dto;
 
+import com.papa.mbg.model.*;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -28,4 +28,5 @@ public interface PmsProductCategoryService {
 
     public int updateShowStatus(List<Long> ids,Integer status);
 
+    public boolean isParent(Long id);
 }

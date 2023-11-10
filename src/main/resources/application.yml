@@ -77,3 +77,8 @@ redis:
     resourceList: "ums:resourceList"
   expire:
     common: 86400
+minio:
+  endpoint: http://localhost:9000 #MinIO服务所在地址
+  bucketName: imgs #存储桶名称
+  accessKey: minioadmin #访问的key
+  secretKey: minioadmin #访问的秘钥

@@ -18,5 +18,6 @@ public interface PmsProductAttributeService {
     public int update(Long id,PmsProductAttributeParam productAttributeParam);
 
     public int delete(List<Long> id);
+    List<PmsProductAttribute> listAll(Integer pageNum,Integer pageSize);
 
 }

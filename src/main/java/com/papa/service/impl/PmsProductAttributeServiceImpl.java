@@ -5,15 +5,15 @@ import com.papa.dao.PmsProductAttributeDAO;
 import com.papa.dto.PmsProductAttributeCategoryItem;
 import com.papa.dto.PmsProductAttributeParam;
 import com.papa.mbg.mapper.PmsProductAttributeCategoryMapper;
+import com.papa.mbg.mapper.PmsProductAttributeCategoryRelationMapper;
 import com.papa.mbg.mapper.PmsProductAttributeMapper;
-import com.papa.mbg.model.PmsProductAttribute;
-import com.papa.mbg.model.PmsProductAttributeCategory;
-import com.papa.mbg.model.PmsProductAttributeExample;
+import com.papa.mbg.model.*;
 import com.papa.service.PmsProductAttributeService;
 import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PmsProductAttributeServiceImpl implements PmsProductAttributeService {
     @Resource
@@ -23,17 +23,21 @@ public class PmsProductAttributeServiceImpl implements PmsProductAttributeServic
     private PmsProductAttributeCategoryMapper attributeCategoryMapper;
 
     @Resource
+    private PmsProductAttributeCategoryRelationMapper relationMapper;
+
+    @Resource
     private PmsProductAttributeDAO attributeDAO;
 
     @Override
     public List<PmsProductAttribute> list(Long attributeCategoryId, Integer type, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum,pageSize);
-        PmsProductAttributeExample example = new PmsProductAttributeExample();
-        example.setOrderByClause("sort desc");
-        PmsProductAttributeExample.Criteria criteria = example.createCriteria();
-        criteria.andProductAttributeCategoryIdEqualTo(attributeCategoryId);
-        criteria.andTypeEqualTo(type);
-        return productAttributeMapper.selectByExample(example);
+        PmsProductAttributeCategoryRelationExample relationExample = new PmsProductAttributeCategoryRelationExample();
+        relationExample.createCriteria().andAttributeCategoryIdEqualTo(attributeCategoryId);
+        List<PmsProductAttributeCategoryRelation> relations = relationMapper.selectByExample(relationExample);
+        List<Long> attributes = relations.stream().map(it -> it.getAttributeId()).collect(Collectors.toList());
+        PmsProductAttributeExample attributeExample = new PmsProductAttributeExample();
+        attributeExample.createCriteria().andIdIn(attributes).andTypeEqualTo(type);
+        return productAttributeMapper.selectByExample(attributeExample);
     }
     @Override
     public int create(PmsProductAttributeParam productAttributeParam) {
@@ -84,5 +88,11 @@ public class PmsProductAttributeServiceImpl implements PmsProductAttributeServic
         }
         attributeCategoryMapper.updateByPrimaryKeySelective(attributeCategory);
         return count;
+    }
+
+    @Override
+    public List<PmsProductAttribute> listAll(Integer pageNum,Integer pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        return productAttributeMapper.selectByExample(new PmsProductAttributeExample());
     }
 }

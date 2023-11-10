@@ -1,5 +1,10 @@
 package com.papa.dao;
 
+import com.papa.mbg.model.UmsAdminRoleRelation;
+import com.papa.mbg.model.UmsMenu;
+import com.papa.mbg.model.UmsResource;
+import com.papa.mbg.model.UmsRole;
+
 import java.util.List;
 
 public interface UmsAdminRoleRelationDAO {

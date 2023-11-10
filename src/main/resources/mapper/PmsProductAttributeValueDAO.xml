@@ -3,13 +3,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.papa.dao.PmsProductAttributeValueDAO">
     <insert id="insertList">
-        insert into `pms_product_attribute_value`(`product_id`,`product_attribute_id`,`value`)
+        insert into `pms_product_attribute_value`(`product_id`,`product_attribute_id`,`value`,`attr_name`)
         values
         <foreach collection="attributeValueList" separator="," index="index" item="it">
             (
                 #{it.productId},
                 #{it.productAttributeId},
-                #{it.value}
+                #{it.value},
+                #{it.attrName}
             )
         </foreach>
     </insert>

@@ -1,5 +1,6 @@
 package com.papa.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.github.pagehelper.PageHelper;
 import com.papa.dao.PmsProductCategoryDAO;
 import com.papa.dto.PmsProductCategoryParam;
@@ -7,6 +8,7 @@ import com.papa.dto.PmsProductCategoryWithChildrenItem;
 import com.papa.mbg.mapper.PmsProductCategoryAttributeRelationMapper;
 import com.papa.mbg.mapper.PmsProductCategoryMapper;
 import com.papa.mbg.mapper.PmsProductMapper;
+import com.papa.mbg.model.*;
 import com.papa.service.PmsProductCategoryService;
 import org.springframework.beans.BeanUtils;
 
@@ -29,7 +31,7 @@ public class PmsProductCategoryServiceiImpl implements PmsProductCategoryService
 
     }
 
-    private PmsProductCategoryWithChildrenItem convert(PmsProductCategory category,List<PmsProductCategory> categories){
+    private PmsProductCategoryWithChildrenItem convert(PmsProductCategory category, List<PmsProductCategory> categories){
         PmsProductCategoryWithChildrenItem pmsProductCategoryWithChildrenItem = new PmsProductCategoryWithChildrenItem();
         BeanUtils.copyProperties(category,pmsProductCategoryWithChildrenItem);
         List<PmsProductCategoryWithChildrenItem> childrenItemList = categories.stream().filter(it -> it.getParentId().equals(category.getId()))
@@ -143,5 +145,13 @@ public class PmsProductCategoryServiceiImpl implements PmsProductCategoryService
             }
             category.setLevel(level);
         }
+    @Override
+    public boolean isParent(Long id) {
+        PmsProductCategoryExample example = new PmsProductCategoryExample();
+        example.createCriteria().andParentIdEqualTo(id);
+        List<PmsProductCategory> childrens =categoryMapper.selectByExample(example);
+        if(CollUtil.isNotEmpty(childrens)) return true;
+        return false;
+    }
 }
 

@@ -2,8 +2,7 @@ package com.papa.service;
 
 import com.papa.dto.AdminParam;
 import com.papa.dto.UmsAdminPasswordParam;
-import com.papa.mbg.model.UmsAdmin;
-import com.papa.mbg.model.UmsPermission;
+import com.papa.mbg.model.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;

@@ -1,7 +1,13 @@
 package com.papa;
 
-import com.papa.common.utils.JwtTokenUtil;
+
+import com.papa.dao.PmsProductAttributeCategoryRelationDAO;
 import com.papa.dao.UserAdminPermissionDAO;
+import com.papa.mbg.mapper.PmsProductAttributeCategoryRelationMapper;
+import com.papa.mbg.mapper.PmsProductAttributeMapper;
+import com.papa.mbg.model.PmsProductAttribute;
+import com.papa.mbg.model.PmsProductAttributeExample;
+import com.papa.security.util.JwtTokenUtil;
 import com.papa.service.RedisService;
 import com.papa.service.UmsAdminService;
 import org.junit.jupiter.api.Test;
@@ -10,6 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootTest
 public class testDAO {
@@ -46,5 +53,19 @@ public class testDAO {
     @Test
     public void t4(){
         adminService.getMenusByAdmin(1L).forEach(item-> System.out.println(item));
+    }
+
+    @Resource
+    private PmsProductAttributeMapper attributeMapper;
+    @Resource
+    private PmsProductAttributeCategoryRelationMapper relationMapper;
+    @Resource
+    private PmsProductAttributeCategoryRelationDAO relationDAO;
+    @Test
+    public void t5(){
+        List<PmsProductAttribute> attributes = attributeMapper.selectByExample(new PmsProductAttributeExample());
+        int result = relationDAO.insertBatch(attributes);
+        System.out.println("result = "+result);
+
     }
 }

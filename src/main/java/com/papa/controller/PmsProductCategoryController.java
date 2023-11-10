@@ -109,5 +109,10 @@ public class PmsProductCategoryController {
         List<PmsProductCategoryWithChildrenItem> childrenItemList = productCategoryService.listWithChildren();
         return CommonResult.success(childrenItemList);
     }
-
+    @RequestMapping(value = "/isParent/{pid}",method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation("判断该目录是否是其他分类的父分类")
+    public CommonResult isParent(@PathVariable("pid")Long id){
+        return CommonResult.success(productCategoryService.isParent(id));
+    }
 }

@@ -12,7 +12,6 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 
 @Configuration
-//@ConfigurationProperties("druiddatasource.statviewservlet")
 public class DruidConfig {
     @Value("druiddatasource.statviewservlet.loginUserName")
     private String loginUserName;

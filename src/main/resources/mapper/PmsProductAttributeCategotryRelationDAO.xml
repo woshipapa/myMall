@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsProductAttributeCategoryRelationDAO">
+    <insert id="insertBatch" >
+        insert into `pms_product_attribute_category_relation`(`attribute_id`,`attribute_category_id`)
+        values
+        <foreach collection="list" separator=","  item="it">
+            (
+                #{it.id},
+                #{it.productAttributeCategoryId}
+            )
+        </foreach>
+    </insert>
+    <delete id="deleteBatch">
+        delete from `pms_product_attribute_category_relation`
+        where
+        <foreach collection="list" item="it" separator="or" index="index">
+            (attribute_id = #{it.attributeId} and attribute_category_id = #{it.attributeCategoryId})
+        </foreach>
+    </delete>
+</mapper>
