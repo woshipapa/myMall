@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.papa.dao.PmsProductDAO">
-    <resultMap id="productMap" type="com.papa.dto.PmsProductResult">
+    <resultMap id="productMap" type="com.papa.dto.PmsProductResult" extends="com.papa.mbg.mapper.PmsProductMapper.ResultMapWithBLOBs">
         <collection property="memberPriceList" columnPrefix="member_" resultMap="com.papa.mbg.mapper.PmsMemberPriceMapper.BaseResultMap"></collection>
         <collection property="productFullReductionList" columnPrefix="full_" resultMap="com.papa.mbg.mapper.PmsProductFullReductionMapper.BaseResultMap"></collection>
         <collection property="productLadderList" columnPrefix="ladder_" resultMap="com.papa.mbg.mapper.PmsProductLadderMapper.BaseResultMap"></collection>
@@ -18,7 +18,7 @@
             from `pms_product_category`
             where id = #{id}
             union all
-            select
+            select c.id,c.parent_id
             from `pms_product_category` c
             INNER JOIN categoryPath cp
             on cp.parent_id = c.id
@@ -26,16 +26,16 @@
         select id from `categoryPath`;
     </select>
 
-    <select id="getUpdateInfo" parameterType="java.lang.Long" resultMap="productMap">
+    <select id="getUpdateInfo"  resultMap="productMap">
         select  p.*,
                 pl.id ladder_id,pl.product_id ladder_product_id,pl.count ladder_count,pl.discount ladder_discount,pl.price ladder_price,
                 pm.id member_id,pm.product_id member_product_id,pm.member_level_id member_member_level_id,pm.member_price member_member_price,pm.member_level_name member_member_level_name,
                 pf.id full_id,pf.product_id full_product_id,pf.full_price full_full_price,pf.reduce_price full_reduce_price,
                 s.id sku_id,s.product_id sku_product_id,s.price sku_price,s.promotion_price sku_promotion_price,s.low_stock sku_low_stock,s.pic sku_pic,s.sale sku_sale,s.sku_code sku_sku_code,s.stock sku_stock,s.sp_data sku_sp_data,
-                a.id attribute_id,a.produce_id attribute_product_id,a.product_attribute_id,attribute_product_attribute_id,a.value attribute_value
+                a.id attribute_id,a.product_id attribute_product_id,a.product_attribute_id attribute_product_attribute_id,a.value attribute_value,a.attr_name attribute_attr_name
         from `pms_product` p
         left join `pms_product_ladder` pl on p.id = pl.product_id
-        left join `pms_product_member_price` pm on p.id = pm.product_id
+        left join `pms_member_price` pm on p.id = pm.product_id
         left join `pms_product_full_reduction` pf on p.id = pf.product_id
         left join `pms_sku_stock` s on p.id = s.product_id
         left join `pms_product_attribute_value` a on p.id = a.product_id

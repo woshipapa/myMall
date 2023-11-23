@@ -3,6 +3,8 @@ package com.papa.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.github.pagehelper.PageHelper;
 import com.papa.dao.PmsProductAttributeCategoryRelationDAO;
+import com.papa.dao.PmsProductAttributeRelationDAO;
+import com.papa.dao.PmsProductDAO;
 import com.papa.mbg.mapper.PmsProductAttributeCategoryMapper;
 import com.papa.mbg.mapper.PmsProductAttributeCategoryRelationMapper;
 import com.papa.mbg.mapper.PmsProductAttributeMapper;
@@ -33,7 +35,7 @@ public class PmsProductAttributeRelationServiceImpl implements PmsProductAttribu
     private PmsProductAttributeCategoryRelationDAO relationDAO;
 
     @Override
-    public List<PmsProductAttribute> list(Long cid, Integer pageNum, Integer pageSize) {
+    public List<PmsProductAttribute> list(Long cid, Integer pageNum, Integer pageSize,Integer type) {
 
         PmsProductAttributeCategoryRelationExample relationExample = new PmsProductAttributeCategoryRelationExample();
         relationExample.createCriteria().andAttributeCategoryIdEqualTo(cid);
@@ -44,10 +46,17 @@ public class PmsProductAttributeRelationServiceImpl implements PmsProductAttribu
         }
         PmsProductAttributeExample attributeExample = new PmsProductAttributeExample();
         //这里只显示规格这种基本属性 1
-        attributeExample.createCriteria().andIdIn(ids).andTypeEqualTo(1);
+        attributeExample.createCriteria().andIdIn(ids).andTypeEqualTo(type);
         //分页的位置很重要，因为我只想在最后的查询中进行分页
         PageHelper.startPage(pageNum,pageSize);
-        return attributeMapper.selectByExample(attributeExample);
+        List<PmsProductAttribute> attributes =  attributeMapper.selectByExample(attributeExample);
+        //在这里进行属性组拥有的基本属性的数量改变
+        Integer attrCount = attributes.size();
+        PmsProductAttributeCategory attributeCategory = new PmsProductAttributeCategory();
+        attributeCategory.setAttributeCount(attrCount);
+        attributeCategory.setId(cid);
+        categoryMapper.updateByPrimaryKeySelective(attributeCategory);
+        return attributes;
     }
 
     @Override
@@ -62,7 +71,7 @@ public class PmsProductAttributeRelationServiceImpl implements PmsProductAttribu
         PmsProductAttributeCategory pmsProductAttributeCategory = categoryMapper.selectByPrimaryKey(id);
         Long productCategoryId = pmsProductAttributeCategory.getProductCategoryId();
         if(productCategoryId!=null&&productCategoryId!=0){
-            //选出与属性组属于同一商品分类下的商品基本规格属性
+            //选出与属性组属于同一商品分类下的商品基本属性
             PmsProductAttributeExample attributeExample = new PmsProductAttributeExample();
             PmsProductAttributeExample.Criteria criteria = attributeExample.createCriteria();
             criteria.andProductCategoryIdEqualTo(productCategoryId).andTypeEqualTo(1);
@@ -129,6 +138,10 @@ public class PmsProductAttributeRelationServiceImpl implements PmsProductAttribu
         return list;
     }
 
+    @Resource
+    private PmsProductAttributeRelationDAO attributeRelationDAO;
+//    @Resource
+//    private PmsProductDAO productDAO;
     /**
      * 获得该商品分类中的销售属性
      * @param categoryId
@@ -137,7 +150,12 @@ public class PmsProductAttributeRelationServiceImpl implements PmsProductAttribu
     @Override
     public List<PmsProductAttribute> getSaleAttrByCategoryId(Long categoryId) {
         PmsProductAttributeExample example = new PmsProductAttributeExample();
-        example.createCriteria().andTypeEqualTo(0).andProductCategoryIdEqualTo(categoryId);
+        PmsProductAttributeExample.Criteria criteria = example.createCriteria();
+        attributeRelationDAO.setMaxRecursionDepth();
+        List<Long> parentPath = attributeRelationDAO.getParentPath(categoryId);
+//        List<Long> catogeryPath = productDAO.getCatogeryPath(categoryId);
+        criteria.andProductCategoryIdIn(parentPath).andTypeEqualTo(0);
+
         return attributeMapper.selectByExample(example);
     }
 

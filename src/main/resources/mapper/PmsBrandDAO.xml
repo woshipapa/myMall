@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsBrandDAO">
+    <select id="allowBrand" resultType="com.papa.mbg.model.PmsBrand">
+        select * from `pms_brand` pb
+        where not exists(
+        select 1 from `pms_product_category_brand_relation` r
+        where r.category_id = #{id} and r.brand_id = pb.id
+        )
+        <if test="key != null">
+            and pb.name like concat('%',#{key},'%')
+        </if>
+    </select>
+</mapper>

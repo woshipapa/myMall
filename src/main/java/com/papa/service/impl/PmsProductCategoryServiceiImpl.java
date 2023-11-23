@@ -5,17 +5,20 @@ import com.github.pagehelper.PageHelper;
 import com.papa.dao.PmsProductCategoryDAO;
 import com.papa.dto.PmsProductCategoryParam;
 import com.papa.dto.PmsProductCategoryWithChildrenItem;
+import com.papa.mbg.mapper.PmsProductAttributeMapper;
 import com.papa.mbg.mapper.PmsProductCategoryAttributeRelationMapper;
 import com.papa.mbg.mapper.PmsProductCategoryMapper;
 import com.papa.mbg.mapper.PmsProductMapper;
 import com.papa.mbg.model.*;
 import com.papa.service.PmsProductCategoryService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class PmsProductCategoryServiceiImpl implements PmsProductCategoryService {
 
     @Resource
@@ -74,6 +77,35 @@ public class PmsProductCategoryServiceiImpl implements PmsProductCategoryService
             if(categoryParam.getProductAttributeIdList()!=null){
                 insertRelationList(categoryId,categoryParam);
             }
+
+        //获取到与该商品种类已经关联的基本属性attributes
+        PmsProductAttributeExample attributeExample = new PmsProductAttributeExample();
+        attributeExample.createCriteria().andTypeEqualTo(1).andProductCategoryIdEqualTo(categoryId);
+        List<PmsProductAttribute> attributes = attributeMapper.selectByExample(attributeExample);
+        List<Long> exists = attributes.stream().map(PmsProductAttribute::getId).collect(Collectors.toList());
+        //获取到要更新的关联属性id列表
+        List<Long> updates = categoryParam.getProductAttributeIdList();
+
+        exists.retainAll(updates);//公共元素
+        List<PmsProductAttribute> deleteAttrRelations = attributes.stream().filter(item -> !exists.contains(item)).collect(Collectors.toList());//此时exists中剩下剔除公共元素的，这里面的属性关联被删除了
+        if(CollUtil.isNotEmpty(deleteAttrRelations)) {
+            PmsProductAttributeExample deleteExample = new PmsProductAttributeExample();
+            deleteExample.createCriteria().andIdIn(deleteAttrRelations.stream().map(PmsProductAttribute::getId).collect(Collectors.toList()));
+            PmsProductAttribute nullAttribute = new PmsProductAttribute();
+            nullAttribute.setProductCategoryId(0L);
+            attributeMapper.updateByExampleSelective(nullAttribute, deleteExample);
+        }
+
+        //这里是要新增的关联
+        updates.removeAll(exists);
+        if(CollUtil.isNotEmpty(updates)) {
+            //有新增的
+            PmsProductAttributeExample addExample = new PmsProductAttributeExample();
+            addExample.createCriteria().andIdIn(updates);
+            PmsProductAttribute addAttribute = new PmsProductAttribute();
+            addAttribute.setProductCategoryId(categoryId);
+            attributeMapper.updateByExampleSelective(addAttribute, addExample);
+        }
             return categoryMapper.updateByPrimaryKeySelective(category);
     }
 
@@ -101,11 +133,28 @@ public class PmsProductCategoryServiceiImpl implements PmsProductCategoryService
         setCategoryLevel(category);
         int count = categoryMapper.insertSelective(category);
         Long categoryId = category.getId();
-        //创建分类与筛选属性的关联
+        //创建分类与筛选属性的关联(category与attribute的关联表)
         insertRelationList(categoryId,param);
+        //修改属性表中的基本属性type==1的他们所属的商品种类
+        updateAttribute(categoryId,param);
         return count;
     }
 
+    @Resource
+    private PmsProductAttributeMapper attributeMapper;
+    private void updateAttribute(Long categoryId,PmsProductCategoryParam param){
+        List<Long> productAttributeIdList = param.getProductAttributeIdList();
+        if(CollUtil.isNotEmpty(productAttributeIdList)){
+            Iterator<Long> iterator = productAttributeIdList.iterator();
+            while(iterator.hasNext()){
+                Long attributeId = iterator.next();
+                PmsProductAttribute attribute = new PmsProductAttribute();
+                attribute.setId(attributeId);
+                attribute.setProductCategoryId(categoryId);
+                attributeMapper.updateByPrimaryKeySelective(attribute);
+            }
+        }
+    }
     @Override
     public int updateNavStatus(List<Long> ids, Integer status) {
         PmsProductCategoryExample example = new PmsProductCategoryExample();

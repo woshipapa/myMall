@@ -15,6 +15,7 @@ public class PmsProductQueryParam {
     @ApiModelProperty("商品货号")
     private String productSn;
 
+    //叶子商品分类
     @ApiModelProperty("商品分类id")
     private Long categoryId;
 

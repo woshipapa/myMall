@@ -22,13 +22,14 @@ public class PmsProductAttributeRelationController {
     @Resource
     private PmsProductAttributeRelationService relationService;
 
-    @RequestMapping(value = "/list/{cid}",method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{gid}",method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation("获取某个属性组下的相关规格属性")
-    public CommonResult list(@PathVariable("cid") Long id,
+    @ApiOperation(value = "获取某个属性组下的相关规格属性",tags = "在查询某个属性组下的属性列表和关联属性时会走这里")
+    public CommonResult list(@PathVariable("gid") Long id,
                              @RequestParam(value = "pageNum",defaultValue = "1") Integer pageNum,
-                             @RequestParam(value = "pageSize",defaultValue = "5")Integer pageSize){
-        List<PmsProductAttribute> attributeList = relationService.list(id,pageNum,pageSize);
+                             @RequestParam(value = "pageSize",defaultValue = "5")Integer pageSize,
+                             @RequestParam(value = "type",defaultValue = "1")Integer type){
+        List<PmsProductAttribute> attributeList = relationService.list(id,pageNum,pageSize,type);
         return CommonResult.success(CommonPage.restPage(attributeList));
     }
 

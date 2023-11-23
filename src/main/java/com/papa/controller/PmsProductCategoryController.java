@@ -102,7 +102,7 @@ public class PmsProductCategoryController {
         }
     }
 
-    @ApiOperation("获得树形分类")
+    @ApiOperation(value = "获得树形分类",tags = "一般都是某个页面created时获取的全部级联分类信息")
     @RequestMapping(value = "/list/withChildren",method = RequestMethod.GET)
     @ResponseBody
     public CommonResult listWithChildren(){
@@ -111,7 +111,7 @@ public class PmsProductCategoryController {
     }
     @RequestMapping(value = "/isParent/{pid}",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation("判断该目录是否是其他分类的父分类")
+    @ApiOperation(value = "判断该目录是否是其他分类的父分类",tags = "判断每个分类下是否还有子分类了来决定是否禁用前端的查看下级按钮")
     public CommonResult isParent(@PathVariable("pid")Long id){
         return CommonResult.success(productCategoryService.isParent(id));
     }

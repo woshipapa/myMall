@@ -9,8 +9,10 @@ import com.papa.dto.PmsProductResult;
 import com.papa.mbg.mapper.*;
 import com.papa.mbg.model.*;
 import com.papa.service.PmsProductService;
+import com.papa.vo.PmsSkuStockVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,6 +21,7 @@ import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -89,11 +92,49 @@ public class PmsProductServiceImpl implements PmsProductService {
         relateAndInsertList(fullReductionDAO,param.getProductFullReductionList(),productId);
         handSkucode(param.getSkuStockList(),productId);
         relateAndInsertList(skuStockDAO,param.getSkuStockList(),productId);
+        addSkuImgs(param.getSkuStockList());
+        relateAttrValue(param.getSkuStockList());
         relateAndInsertList(productAttributeValueDAO,param.getProductAttributeValues(),productId);
         relateAndInsertList(prefrenceAreaProductDAO,param.getPrefrenceAreaProductRelationList(),productId);
         relateAndInsertList(subjectProductRelationDAO,param.getSubjectProductRelations(),productId);
     }
+    @Resource
+    private PmsSkuImagesMapper imagesMapper;
+    private void addSkuImgs(List<PmsSkuStockVO> skuStockList){
+        List<PmsSkuImages> images = new ArrayList<>();
+        for(PmsSkuStock sku : skuStockList) {
+            String pic = sku.getPic();
+            if (StringUtils.hasText(pic)) {
+                List<String> one = Arrays.asList(pic.split(","));
+                for (int i = 0; i < one.size(); i++) {
+                    PmsSkuImages skuImage = new PmsSkuImages();
+                    skuImage.setSkuId(sku.getId());
+                    skuImage.setImgSort(0);
+                    skuImage.setDefaultImg(0);//这里可以根据前端传来的进行设置
+                    skuImage.setImgUrl(one.get(i));
+                    images.add(skuImage);
+                }
+            }
+        }
+        if(CollUtil.isNotEmpty(images)){
+            imagesMapper.insertBatch(images);
+        }
+    }
+    @Resource
+    private PmsSkuStockAttributeValueMapper skuStockAttributeValueMapper;
+    private void relateAttrValue(List<PmsSkuStockVO> skuStockVOS){
+        if(CollUtil.isNotEmpty(skuStockVOS)){
+            for(PmsSkuStockVO skuStockVO:skuStockVOS){
+                Long skuId = skuStockVO.getId();
+                List<PmsSkuStockAttributeValue> values = skuStockVO.getAttrs();
+                for(PmsSkuStockAttributeValue value : values){
+                    value.setSkuId(skuId);
+                    skuStockAttributeValueMapper.insert(value);
+                }
+            }
+        }
 
+    }
     private <T>void relateAndInsertList(Object dao, List<T> list, Long productId)  {
         try {
             if (CollUtil.isEmpty(list)) return;
@@ -114,7 +155,7 @@ public class PmsProductServiceImpl implements PmsProductService {
     }
 
 
-    private void handSkucode(List<PmsSkuStock> list, Long productId){
+    private void handSkucode(List<PmsSkuStockVO> list, Long productId){
         if(CollUtil.isEmpty(list)) return ;
         for(int i=0;i<list.size();i++){
             PmsSkuStock skuStock = list.get(i);
@@ -132,7 +173,22 @@ public class PmsProductServiceImpl implements PmsProductService {
     @Resource
     private PmsProductDAO productDAO;
     public PmsProductResult getUpdateInfos(Long productId){
-        return productDAO.getUpdateInfo(productId);
+        PmsProductResult result = productDAO.getUpdateInfo(productId);
+        List<PmsSkuStockVO> skuStockVOS = result.getSkuStockList();
+        List<PmsSkuStockVO> newSkuStockVOs = new ArrayList<>();
+        for(PmsSkuStock s : skuStockVOS){
+            Long skuId = s.getId();
+            //根据skuId去sku_stock_attribute_value表中寻找相关属性
+            PmsSkuStockAttributeValueExample attributeValueExample = new PmsSkuStockAttributeValueExample();
+            attributeValueExample.createCriteria().andSkuIdEqualTo(skuId);
+            List<PmsSkuStockAttributeValue> attributeValues = skuStockAttributeValueMapper.selectByExampleWithBLOBs(attributeValueExample);
+            PmsSkuStockVO skuStockVO = new PmsSkuStockVO();
+            BeanUtils.copyProperties(s,skuStockVO);
+            skuStockVO.setAttrs(attributeValues);
+            newSkuStockVOs.add(skuStockVO);
+        }
+        result.setSkuStockList(newSkuStockVOs);
+        return result;
     }
 
 
@@ -189,7 +245,7 @@ public class PmsProductServiceImpl implements PmsProductService {
 
 
     private void handleUpdateSkuStockList(Long id,PmsProductParam param){
-        List<PmsSkuStock> newSkus = param.getSkuStockList();
+        List<PmsSkuStockVO> newSkus = param.getSkuStockList();
         if(CollUtil.isEmpty(newSkus)){
             PmsSkuStockExample skuStockExample = new PmsSkuStockExample();
             skuStockExample.createCriteria().andProductIdEqualTo(id);
@@ -199,9 +255,9 @@ public class PmsProductServiceImpl implements PmsProductService {
         example.createCriteria().andProductIdEqualTo(id);
         List<PmsSkuStock> oriSkus = skuStockMapper.selectByExample(example);
 
-        List<PmsSkuStock> insertSkus = oriSkus.stream().filter(it->it.getId()==null).collect(Collectors.toList());
+        List<PmsSkuStockVO> insertSkus = newSkus.stream().filter(it->it.getId()==null).collect(Collectors.toList());
 
-        List<PmsSkuStock> updateSkus = oriSkus.stream().filter(it->it.getId()!=null).collect(Collectors.toList());
+        List<PmsSkuStockVO> updateSkus = newSkus.stream().filter(it->it.getId()!=null).collect(Collectors.toList());
         List<Long> updateIds = updateSkus.stream().map(it->it.getId()).collect(Collectors.toList());;
         List<PmsSkuStock> removeSkus = newSkus.stream().filter(it->!updateIds.contains(it.getId())).collect(Collectors.toList());
 
@@ -211,12 +267,16 @@ public class PmsProductServiceImpl implements PmsProductService {
             PmsSkuStockExample example1 = new PmsSkuStockExample();
             example1.createCriteria().andIdIn(removeIds);
             skuStockMapper.deleteByExample(example1);
+            PmsSkuStockAttributeValueExample attributeValueExample = new PmsSkuStockAttributeValueExample();
+            attributeValueExample.createCriteria().andSkuIdIn(removeIds);
+            skuStockAttributeValueMapper.deleteByExample(attributeValueExample);
         }
         handSkucode(insertSkus,id);
         handSkucode(updateSkus,id);
         if(CollUtil.isNotEmpty(insertSkus)){
             //插入新的sku
             relateAndInsertList(skuStockDAO,insertSkus,id);
+            relateAttrValue(insertSkus);
         }
         if(CollUtil.isNotEmpty(updateSkus)){
             //修改之前存在的sku

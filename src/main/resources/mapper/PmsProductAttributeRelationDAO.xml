@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsProductAttributeRelationDAO">
+    <update id="setMaxRecursionDepth">
+        set @@cte_max_recursion_depth = 2000
+    </update>
+    <select id="getParentPath" parameterType="java.lang.Long" resultType="java.lang.Long">
+
+        with recursive CategoryPath(id,parent_id)
+                           as (
+                select ppc.id,ppc.parent_id
+                from `pms_product_category` ppc
+                where ppc.id = #{id}
+
+                union all
+
+                select  c.id,c.parent_id
+                from `pms_product_category` c inner join  CategoryPath cp
+                                                         on cp.parent_id = c.id
+            )
+        select id from CategoryPath;
+    </select>
+</mapper>

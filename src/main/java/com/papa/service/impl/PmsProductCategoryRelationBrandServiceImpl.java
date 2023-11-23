@@ -8,12 +8,13 @@ import com.papa.mbg.model.PmsBrandExample;
 import com.papa.mbg.model.PmsProductCategoryBrandRelation;
 import com.papa.mbg.model.PmsProductCategoryBrandRelationExample;
 import com.papa.service.PmsProductCategoryRelationBrandService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class PmsProductCategoryRelationBrandServiceImpl implements PmsProductCategoryRelationBrandService {
 
     @Resource

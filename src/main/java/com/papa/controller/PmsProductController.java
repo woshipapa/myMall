@@ -4,15 +4,22 @@ import com.papa.common.api.CommonPage;
 import com.papa.common.api.CommonResult;
 import com.papa.dto.PmsProductParam;
 import com.papa.dto.PmsProductQueryParam;
+import com.papa.dto.advice.PmsProductParamDTO;
+import com.papa.dto.advice.PmsSkuStockAttributeValueDTO;
+import com.papa.dto.advice.PmsSkuStockDTO;
 import com.papa.mbg.model.PmsProduct;
+import com.papa.mbg.model.PmsSkuStockAttributeValue;
 import com.papa.service.PmsProductService;
+import com.papa.vo.PmsSkuStockVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @Api(tags = "PmsProductController",description = "商品管理")
@@ -26,7 +33,8 @@ public class PmsProductController {
     @ApiOperation("创建商品")
     @RequestMapping(value = "/create",method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult create(@RequestBody PmsProductParam param){
+    public CommonResult create(@RequestBody PmsProductParamDTO paramDTO){
+        PmsProductParam param = convertDTOtoParam(paramDTO);
         int count = productService.create(param);
         if(count > 0){
             return CommonResult.success(count);
@@ -34,7 +42,29 @@ public class PmsProductController {
             return CommonResult.failed();
         }
     }
-
+    private PmsProductParam convertDTOtoParam(PmsProductParamDTO dto){
+        PmsProductParam param = new PmsProductParam();
+        BeanUtils.copyProperties(dto,param);
+        List<PmsSkuStockDTO> skuStockDTOList = dto.getSkuStockList();
+        List<PmsSkuStockVO> skuStockVOS = skuStockDTOList.stream().map(
+                it -> {
+                    PmsSkuStockVO skuStockVO = new PmsSkuStockVO();
+                    BeanUtils.copyProperties(it, skuStockVO);
+                    List<PmsSkuStockAttributeValueDTO> attrs = it.getAttrs();
+                    List<PmsSkuStockAttributeValue> attributeValues = attrs.stream().map(attr -> {
+                        PmsSkuStockAttributeValue skuStockAttributeValue = new PmsSkuStockAttributeValue();
+                        skuStockAttributeValue.setAttributeName(attr.getKey());//前端传来的key对应属性名
+                        skuStockAttributeValue.setValue(attr.getValue());
+                        skuStockAttributeValue.setAttributeId(attr.getAttributeId());
+                        return skuStockAttributeValue;
+                    }).collect(Collectors.toList());
+                    skuStockVO.setAttrs(attributeValues);
+                    return skuStockVO;
+                }
+        ).collect(Collectors.toList());
+        param.setSkuStockList(skuStockVOS);
+        return param;
+    }
     @ApiOperation("根据商品id回显商品信息")
     @RequestMapping(value = "/updateInfo/{id}",method = RequestMethod.GET)
     @ResponseBody
@@ -47,8 +77,9 @@ public class PmsProductController {
     @RequestMapping(value = "/update/{id}",method = RequestMethod.POST)
     @ResponseBody
     public CommonResult update(@PathVariable("id")Long id,
-                               @RequestBody PmsProductParam param){
-        int count = productService.update(id,param);
+                               @RequestBody PmsProductParamDTO paramDTO){
+        PmsProductParam pmsProductParam = convertDTOtoParam(paramDTO);
+        int count = productService.update(id,pmsProductParam);
         if(count > 0){
             return CommonResult.success(count);
         }else{
@@ -59,7 +90,7 @@ public class PmsProductController {
     @ApiOperation("查询商品")
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult list(PmsProductQueryParam queryParam,
+    public CommonResult<CommonPage<PmsProduct>> list(PmsProductQueryParam queryParam,
                              @RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
                              @RequestParam(value = "pageSize",defaultValue = "5")Integer pageSize){
         List<PmsProduct> products = productService.list(queryParam,pageNum,pageSize);

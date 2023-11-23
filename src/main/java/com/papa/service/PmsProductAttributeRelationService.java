@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public interface PmsProductAttributeRelationService {
 
-    public List<PmsProductAttribute> list(Long cid, Integer pageNum, Integer pageSize);
+    public List<PmsProductAttribute> list(Long cid, Integer pageNum, Integer pageSize,Integer type);
 
     public int deleteBatch(List<PmsProductAttributeCategoryRelation> relations);
 

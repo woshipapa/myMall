@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.PmsProductAttributeCategoryDao">
+    <resultMap id="getListWithAttrMap" type="com.papa.dto.PmsProductAttributeCategoryItem" extends="com.papa.mbg.mapper.PmsProductAttributeCategoryMapper.BaseResultMap">
+        <collection property="attributeList" columnPrefix="attr_" resultMap="com.papa.mbg.mapper.PmsProductAttributeMapper.BaseResultMap"></collection>
+    </resultMap>
+    <select id="getListWithAttr" resultMap="getListWithAttrMap">
+        select pac.id id,
+               pac.name name,
+               a.id attr_id,
+               a.name attr_name
+        from `pms_product_attribute_category_relation` cr left join `pms_product_attribute` a
+                                                                    on cr.attribute_id = a.id
+                                                          left join `pms_product_attribute_category` pac on cr.attribute_category_id = pac.id
+
+    </select>
+</mapper>

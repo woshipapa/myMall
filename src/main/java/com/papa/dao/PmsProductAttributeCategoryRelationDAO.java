@@ -9,5 +9,7 @@ import java.util.List;
 public interface PmsProductAttributeCategoryRelationDAO {
     public int insertBatch(@Param("list") List<PmsProductAttribute> attributeList);
 
-    public int deleteBatch(@Param("list") List<PmsProductAttributeCategoryRelation> relationList)
+    public int deleteBatch(@Param("list") List<PmsProductAttributeCategoryRelation> relationList);
+
+
 }

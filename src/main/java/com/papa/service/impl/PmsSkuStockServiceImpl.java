@@ -5,12 +5,13 @@ import com.papa.mbg.mapper.PmsSkuStockMapper;
 import com.papa.mbg.model.PmsSkuStock;
 import com.papa.mbg.model.PmsSkuStockExample;
 import com.papa.service.PmsSkuStockService;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class PmsSkuStockServiceImpl implements PmsSkuStockService {
     @Resource
     private PmsSkuStockMapper stockMapper;

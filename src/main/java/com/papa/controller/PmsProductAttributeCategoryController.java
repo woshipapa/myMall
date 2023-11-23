@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @Controller
-@Api(tags = "PmsProductAttributeCategoryController",description = "商品属性类型管理")
-@RequestMapping("/productAttributeCategory")
+@Api(tags = "PmsProductAttributeCategoryController",description = "商品属性组管理")
+@RequestMapping("/productAttribute/category")
 public class PmsProductAttributeCategoryController {
     @Resource
     private PmsProductAttributeCategoryService attributeCategoryService;
@@ -43,10 +43,10 @@ public class PmsProductAttributeCategoryController {
     }
 
 
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @RequestMapping(value = "/listAll",method = RequestMethod.GET)
     @ApiOperation("分页获取商品属性类型")
     @ResponseBody
-    public CommonResult list(@RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
+    public CommonResult listAll(@RequestParam(value = "pageNum",defaultValue = "1")Integer pageNum,
                              @RequestParam(value = "pageSize",defaultValue = "5")Integer pageSize){
         return CommonResult.success(CommonPage.restPage(attributeCategoryService.list(pageNum, pageSize)));
     }
@@ -70,4 +70,12 @@ public class PmsProductAttributeCategoryController {
             return CommonResult.failed();
         }
     }
+
+    @RequestMapping(value = "/list/withAttr",method = RequestMethod.GET)
+    @ApiOperation(value = "获取所有商品属性组和其下属性",tags = "在添加和编辑商品类时请求的属性组以及其下属性来选择关联")
+    @ResponseBody
+    public CommonResult getListWithAttr(){
+        return CommonResult.success(CommonPage.restPage(attributeCategoryService.getGroupsWithAttr()));
+    }
+
 }

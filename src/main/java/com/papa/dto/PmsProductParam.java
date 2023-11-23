@@ -1,6 +1,7 @@
 package com.papa.dto;
 
 import com.papa.mbg.model.*;
+import com.papa.vo.PmsSkuStockVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ public class PmsProductParam extends PmsProduct {
     private List<PmsProductLadder> productLadderList;
 
     @ApiModelProperty("商品sku库存列表")
-    private List<PmsSkuStock> skuStockList;
+    private List<PmsSkuStockVO> skuStockList;
 
     @ApiModelProperty("商品参数和自定义规格列表")
     private List<PmsProductAttributeValue> productAttributeValues;

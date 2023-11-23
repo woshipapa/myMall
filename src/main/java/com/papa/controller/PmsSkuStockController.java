@@ -21,14 +21,15 @@ public class PmsSkuStockController {
 
     @RequestMapping(value = "/{pid}",method = RequestMethod.GET)
     @ResponseBody
-    @ApiOperation("根据商品id和sku编码模糊查询")
+    @ApiOperation(value = "根据商品id和sku编码模糊查询",tags = "在商品index界面点击一条具体的商品记录的sku库存信息时回显")
     public CommonResult getList(@PathVariable Long pid, @RequestParam(value = "keyword",required = false) String keyword){
         return CommonResult.success(skuStockService.getList(pid,keyword));
     }
 
+
     @RequestMapping(value = "/update/{pid}",method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation("批量更新sku库存信息")
+    @ApiOperation(value = "批量更新sku库存信息",tags = "在sku的编辑页面进行修改后提交更新")
     public CommonResult update(@PathVariable Long pid, @RequestBody List<PmsSkuStock> skuStockList){
         int count = skuStockService.update(pid, skuStockList);
         if(count > 0){

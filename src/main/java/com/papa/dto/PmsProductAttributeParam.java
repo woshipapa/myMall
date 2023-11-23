@@ -11,8 +11,11 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @EqualsAndHashCode
 public class PmsProductAttributeParam {
+    @ApiModelProperty("与商品属性关联的商品类型")
+    private Long productCategoryId;
 
     @NotEmpty
+    @ApiModelProperty("关联的属性组id")
     private Long categoryId;
 
     @NotEmpty
