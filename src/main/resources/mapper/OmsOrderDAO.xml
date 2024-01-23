@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.papa.dao.OmsOrderDAO">
+    <resultMap id="detailMap" type="com.papa.dto.OmsOrderDetail" extends="com.papa.mbg.mapper.OmsOrderMapper.BaseResultMap">
+        <collection property="orderItemList" columnPrefix="item_" resultMap="com.papa.mbg.mapper.OmsOrderItemMapper.BaseResultMap"></collection>
+        <collection property="operateHistories" columnPrefix="history_" resultMap="com.papa.mbg.mapper.OmsOrderOperateHistoryMapper.BaseResultMap"></collection>
+    </resultMap>
+    <select id="list" parameterType="com.papa.dto.OmsOrderQueryParam" resultType="com.papa.mbg.model.OmsOrder">
+        select *
+            from `oms_order`
+        <where>
+            delete_status = 0
+            <if test="param.orderSn !=null and param.orderSn !=''">
+                and order_sn = #{param.orderSn}
+            </if>
+            <if test="param.receiverKeyword != null and param.receiverKeyword != ''">
+                and (
+                    receiver_name like concat("%",#{param.receiverKeyword},"%")
+                    or receiver_phone like concat("%",#{param.receiverKeyword},"%")
+                )
+            </if>
+            <if test="param.status != null">
+                and status = #{param.status}
+            </if>
+            <if test="param.orderType != null">
+                and order_type = #{param.orderType}
+            </if>
+            <if test="param.sourceType != null">
+                and source_type = #{param.sourceType}
+            </if>
+            <if test="param.createTime != null and param.createTime != ''">
+                and create_time = #{param.createTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="detail" resultMap="detailMap">
+        select o.*,
+               oi.id item_id,
+               oi.product_id item_product_id,
+               oi.product_sn item_product_sn,
+               oi.product_pic item_product_pic,
+               oi.product_name item_product_name,
+               oi.product_brand item_product_brand,
+               oi.product_price item_product_price,
+               oi.product_quantity item_product_quantity,
+               oi.product_attr item_product_attr,
+               h.id history_id,
+               h.operate_man history_operate_man,
+               h.create_time history_create_time,
+               h.order_status history_order_status,
+               h.note history_note
+            from `oms_order` o
+            left join `oms_order_item` oi on o.id = oi.order_id
+            left join `oms_order_operate_history` h on o.id = h.order_id
+        where o.id = #{id}
+    </select>
+
+</mapper>
