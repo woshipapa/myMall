@@ -14,12 +14,13 @@ import com.papa.mbg.model.OmsOrderExample;
 import com.papa.mbg.model.OmsOrderOperateHistory;
 import com.papa.portal.design.OrderStatus;
 import com.papa.service.OmsOrderService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class OmsOrderServiceImpl implements OmsOrderService {
 
     @Resource
@@ -43,14 +44,16 @@ public class OmsOrderServiceImpl implements OmsOrderService {
     @Override
     public int delivery(List<OmsOrderDeliveryParam> list) {
         //更新订单表中这个订单的状态和物流信息
-        for(OmsOrderDeliveryParam it : list){
-            OmsOrder order = new OmsOrder();
-            order.setId(it.getOrderId());
-            order.setStatus(OrderStatus.SHIPPED.getValue());
-            order.setDeliveryCompany(it.getDeliveryCompany());
-            order.setDeliverySn(it.getDeliverySn());
-            orderMapper.updateByPrimaryKeySelective(order);
-        }
+//        for(OmsOrderDeliveryParam it : list){
+//            OmsOrder order = new OmsOrder();
+//            order.setId(it.getOrderId());
+//            order.setStatus(OrderStatus.SHIPPED.getValue());
+//            order.setDeliveryCompany(it.getDeliveryCompany());
+//            order.setDeliverySn(it.getDeliverySn());
+//            orderMapper.updateByPrimaryKeySelective(order);
+//        }
+        //使用case-when-then语法通过一条sql更新多条行记录
+        int count = orderDAO.delivery(list);
         List<OmsOrderOperateHistory> orderOperateHistories = list.stream().map(
                 it -> {
                     OmsOrderOperateHistory operateHistory = new OmsOrderOperateHistory();
@@ -63,7 +66,7 @@ public class OmsOrderServiceImpl implements OmsOrderService {
                 }
         ).collect(Collectors.toList());
         operateHistoryDAO.insertList(orderOperateHistories);
-        return 0;
+        return count;
     }
 
     @Override
@@ -124,5 +127,24 @@ public class OmsOrderServiceImpl implements OmsOrderService {
         history.setNote("修改收货人信息");
         operateHistoryMapper.insertSelective(history);
         return count;
+    }
+
+    @Override
+    public int updateOrderNote(Long id, String note, Integer status) {
+        OmsOrder order = new OmsOrder();
+        order.setId(id);
+        order.setNote(note);
+        order.setModifyTime(new Date());
+        orderMapper.updateByPrimaryKeySelective(order);
+        OmsOrderOperateHistory history = new OmsOrderOperateHistory();
+        history.setNote(note);
+        history.setOrderStatus(status);
+        history.setOrderId(id);
+        history.setCreateTime(new Date());
+        history.setOperateMan("后台管理员");
+        history.setNote("修改备注信息："+note);
+        history.setCreateTime(new Date());
+        operateHistoryMapper.insertSelective(history);
+        return 0;
     }
 }

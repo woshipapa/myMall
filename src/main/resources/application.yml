@@ -47,6 +47,7 @@ mybatis:
     - classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true
+  type-aliases-package: com.papa.mbg.model,com.papa.dto
 logging:
   level:
     org.springframework.web: DEBUG

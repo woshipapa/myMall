@@ -34,4 +34,5 @@ public interface OmsOrderService {
     public int updateReceiverInfo(OmsOrderReceiverInfoParam param);
 
 
+    public int updateOrderNote(Long id,String note,Integer status);
 }

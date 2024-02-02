@@ -55,5 +55,33 @@
             left join `oms_order_operate_history` h on o.id = h.order_id
         where o.id = #{id}
     </select>
-
+    <update id="delivery">
+        update oms_order
+        set
+        delivery_sn = case id
+        <foreach collection="list" item="it">
+            when #{it.orderId} then #{it.deliverSn}
+        </foreach>
+        end,
+        delivery_company = case id
+        <foreach collection="list" item="it">
+            when #{it.orderId} then #{it.deliveryCompany}
+        </foreach>
+        end,
+        delivery_time = case id
+        <foreach collection="list" item="it">
+            when #{it.orderId} then now()
+        </foreach>
+        end,
+        `status` = case id
+        <foreach collection="list" item="item">
+            when #{item.orderId} then 2
+        </foreach>
+        end
+        where id in
+        <foreach collection="list" item="it" open="(" close=")" separator=",">
+            #{it.orderId}
+        </foreach>
+        and status = 1
+    </update>
 </mapper>

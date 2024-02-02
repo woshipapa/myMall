@@ -66,6 +66,11 @@ public class PmsProductAttributeRelationController {
         }
     }
 
+    /**
+     * 在通过了第一个步骤step之后，因为选了某个商品分类，此时会来获取与商品分类有关的基本属性和销售属性
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/productCategory/{categoryId}",method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation("获取到与该商品分类有关的基本属性")
