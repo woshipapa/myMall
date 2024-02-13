@@ -28,6 +28,13 @@ public class PmsBrandServiceImpl implements PmsBrandService {
     }
 
     @Override
+    public List<PmsBrand> listBrandListInIds(List<Long> ids) {
+        PmsBrandExample brandExample = new PmsBrandExample();
+        brandExample.createCriteria().andIdIn(ids);
+        return pmsBrandMapper.selectByExample(brandExample);
+    }
+
+    @Override
     public int createBrand(PmsBrandParam param) {
         PmsBrand brand = new PmsBrand();
         BeanUtils.copyProperties(param,brand);

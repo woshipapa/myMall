@@ -9,6 +9,8 @@ public interface PmsBrandService {
 
     List<PmsBrand> listAllBrand();
 
+    List<PmsBrand> listBrandListInIds(List<Long> ids);
+
     int createBrand(PmsBrandParam pmsBrand);
 
     int deleteBrand(Long id);
@@ -24,5 +26,7 @@ public interface PmsBrandService {
     int updateShowStatus(List<Long> id,Integer status);
 
     int updateFactoryStatus(List<Long> id,Integer status);
+
+
 
 }

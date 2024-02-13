@@ -242,6 +242,13 @@ public class PmsProductServiceImpl implements PmsProductService {
         return count;
     }
 
+    @Override
+    public List<PmsProduct> batchGet(List<Long> ids) {
+        PmsProductExample productExample = new PmsProductExample();
+        productExample.createCriteria().andIdIn(ids);
+        List<PmsProduct> products = productMapper.selectByExample(productExample);
+        return products;
+    }
 
 
     private void handleUpdateSkuStockList(Long id,PmsProductParam param){

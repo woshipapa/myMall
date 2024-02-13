@@ -9,7 +9,7 @@ spring:
     password: sdytfsyzYP1314
     driver-class-name: com.mysql.jdbc.Driver
   redis:
-    host: localhost
+    host: 8.146.210.79
     database: 0
     password:
     port: 6379

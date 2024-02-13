@@ -87,6 +87,14 @@ public class PmsProductController {
         }
     }
 
+    @ApiOperation("获取批量商品")
+    @RequestMapping(value = "/batch",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult batchGet(@RequestBody List<Long> ids){
+        return CommonResult.success(productService.batchGet(ids));
+    }
+
+
     @ApiOperation("查询商品")
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody

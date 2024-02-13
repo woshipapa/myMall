@@ -16,7 +16,7 @@ public interface PmsProductService {
     @Transactional
     public int update(Long id,PmsProductParam param);
 
-
+    public List<PmsProduct> batchGet(List<Long> ids);
     public List<PmsProduct> list(PmsProductQueryParam param,Integer pageNum,Integer pageSize);
 
     public PmsProductResult getUpdateInfos(Long id);

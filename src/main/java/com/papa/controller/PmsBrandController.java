@@ -32,6 +32,13 @@ public class PmsBrandController {
         return CommonResult.success(pmsBrandService.listAllBrand());
     }
 
+
+    @ApiOperation("获取指定id集合中的品牌信息")
+    @PostMapping(value = "/list/ids")
+    @ResponseBody
+    public CommonResult listInIds(@RequestBody List<Long> ids){
+        return CommonResult.success(pmsBrandService.listBrandListInIds(ids));
+    }
     @ApiOperation("创建品牌")
     @PostMapping("/create")
     @ResponseBody
